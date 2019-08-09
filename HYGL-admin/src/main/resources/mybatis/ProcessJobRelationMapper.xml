@@ -1,0 +1,612 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.resale.background.mapper.ProcessJobRelationMapper">
+  <resultMap id="BaseResultMap" type="com.resale.background.pojo.ProcessJobRelation">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="process_id" jdbcType="INTEGER" property="processId" />
+    <result column="job_basic_id" jdbcType="INTEGER" property="jobBasicId" />
+    <result column="level" jdbcType="VARCHAR" property="level" />
+    <result column="operating_frequency" jdbcType="VARCHAR" property="operatingFrequency" />
+    <result column="run_date" jdbcType="VARCHAR" property="runDate" />
+    <result column="run_time" jdbcType="VARCHAR" property="runTime" />
+    <result column="starting_work" jdbcType="VARCHAR" property="startingWork" />
+    <result column="last_job_name" jdbcType="VARCHAR" property="lastJobName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="operator" jdbcType="VARCHAR" property="operator" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, process_id, job_basic_id, level, operating_frequency, run_date, run_time, starting_work, 
+    last_job_name, create_time, operator
+  </sql>
+  <select id="selectByExample" parameterType="com.resale.background.pojo.ProcessJobRelationExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_process_job_relation
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_process_job_relation
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_process_job_relation
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.resale.background.pojo.ProcessJobRelationExample">
+    delete from t_process_job_relation
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.resale.background.pojo.ProcessJobRelation">
+    insert into t_process_job_relation (id, process_id, job_basic_id, 
+      level, operating_frequency, run_date, 
+      run_time, starting_work, last_job_name, 
+      create_time, operator)
+    values (#{id,jdbcType=INTEGER}, #{processId,jdbcType=INTEGER}, #{jobBasicId,jdbcType=INTEGER}, 
+      #{level,jdbcType=VARCHAR}, #{operatingFrequency,jdbcType=VARCHAR}, #{runDate,jdbcType=VARCHAR}, 
+      #{runTime,jdbcType=VARCHAR}, #{startingWork,jdbcType=VARCHAR}, #{lastJobName,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{operator,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.resale.background.pojo.ProcessJobRelation">
+    insert into t_process_job_relation
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="processId != null">
+        process_id,
+      </if>
+      <if test="jobBasicId != null">
+        job_basic_id,
+      </if>
+      <if test="level != null">
+        level,
+      </if>
+      <if test="operatingFrequency != null">
+        operating_frequency,
+      </if>
+      <if test="runDate != null">
+        run_date,
+      </if>
+      <if test="runTime != null">
+        run_time,
+      </if>
+      <if test="startingWork != null">
+        starting_work,
+      </if>
+      <if test="lastJobName != null">
+        last_job_name,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="operator != null">
+        operator,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="processId != null">
+        #{processId,jdbcType=INTEGER},
+      </if>
+      <if test="jobBasicId != null">
+        #{jobBasicId,jdbcType=INTEGER},
+      </if>
+      <if test="level != null">
+        #{level,jdbcType=VARCHAR},
+      </if>
+      <if test="operatingFrequency != null">
+        #{operatingFrequency,jdbcType=VARCHAR},
+      </if>
+      <if test="runDate != null">
+        #{runDate,jdbcType=VARCHAR},
+      </if>
+      <if test="runTime != null">
+        #{runTime,jdbcType=VARCHAR},
+      </if>
+      <if test="startingWork != null">
+        #{startingWork,jdbcType=VARCHAR},
+      </if>
+      <if test="lastJobName != null">
+        #{lastJobName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operator != null">
+        #{operator,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.resale.background.pojo.ProcessJobRelationExample" resultType="java.lang.Long">
+    select count(*) from t_process_job_relation
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update t_process_job_relation
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.processId != null">
+        process_id = #{record.processId,jdbcType=INTEGER},
+      </if>
+      <if test="record.jobBasicId != null">
+        job_basic_id = #{record.jobBasicId,jdbcType=INTEGER},
+      </if>
+      <if test="record.level != null">
+        level = #{record.level,jdbcType=VARCHAR},
+      </if>
+      <if test="record.operatingFrequency != null">
+        operating_frequency = #{record.operatingFrequency,jdbcType=VARCHAR},
+      </if>
+      <if test="record.runDate != null">
+        run_date = #{record.runDate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.runTime != null">
+        run_time = #{record.runTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.startingWork != null">
+        starting_work = #{record.startingWork,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lastJobName != null">
+        last_job_name = #{record.lastJobName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.operator != null">
+        operator = #{record.operator,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update t_process_job_relation
+    set id = #{record.id,jdbcType=INTEGER},
+      process_id = #{record.processId,jdbcType=INTEGER},
+      job_basic_id = #{record.jobBasicId,jdbcType=INTEGER},
+      level = #{record.level,jdbcType=VARCHAR},
+      operating_frequency = #{record.operatingFrequency,jdbcType=VARCHAR},
+      run_date = #{record.runDate,jdbcType=VARCHAR},
+      run_time = #{record.runTime,jdbcType=VARCHAR},
+      starting_work = #{record.startingWork,jdbcType=VARCHAR},
+      last_job_name = #{record.lastJobName,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      operator = #{record.operator,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.resale.background.pojo.ProcessJobRelation">
+    update t_process_job_relation
+    <set>
+      <if test="processId != null">
+        process_id = #{processId,jdbcType=INTEGER},
+      </if>
+      <if test="jobBasicId != null">
+        job_basic_id = #{jobBasicId,jdbcType=INTEGER},
+      </if>
+      <if test="level != null">
+        level = #{level,jdbcType=VARCHAR},
+      </if>
+      <if test="operatingFrequency != null">
+        operating_frequency = #{operatingFrequency,jdbcType=VARCHAR},
+      </if>
+      <if test="runDate != null">
+        run_date = #{runDate,jdbcType=VARCHAR},
+      </if>
+      <if test="runTime != null">
+        run_time = #{runTime,jdbcType=VARCHAR},
+      </if>
+      <if test="startingWork != null">
+        starting_work = #{startingWork,jdbcType=VARCHAR},
+      </if>
+      <if test="lastJobName != null">
+        last_job_name = #{lastJobName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operator != null">
+        operator = #{operator,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.resale.background.pojo.ProcessJobRelation">
+    update t_process_job_relation
+    set process_id = #{processId,jdbcType=INTEGER},
+      job_basic_id = #{jobBasicId,jdbcType=INTEGER},
+      level = #{level,jdbcType=VARCHAR},
+      operating_frequency = #{operatingFrequency,jdbcType=VARCHAR},
+      run_date = #{runDate,jdbcType=VARCHAR},
+      run_time = #{runTime,jdbcType=VARCHAR},
+      starting_work = #{startingWork,jdbcType=VARCHAR},
+      last_job_name = #{lastJobName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      operator = #{operator,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+   <!-- 流程节点信息查询条件 -->
+  <sql id="dynamicPageWhere">
+  	<if test="jobName != null">
+  		and job.job_name = #{jobName}
+ 	</if>
+  		and pjr.process_id  = #{processId}
+ 	<if test="jobType != null">
+  		and job.job_type = #{jobType}
+ 	</if>
+ 	<!-- 流程监控页面 查询基础表时 无此状态  -->
+ 	<if test="runStatus != 1 and  runStatus !='' ">
+  		and 1 != 1
+ 	</if>
+  </sql>
+  <!-- 查询流程下面的节点 -->
+  <select id="findAllRetMapByPage" parameterType="String" resultType="hashmap">
+  	SELECT
+  	    "1" flag,
+		pjr.id,
+		job.job_name,
+		job.job_sketch,
+		job.job_number,
+		pjr.process_id,
+		<if test="flag == 1 ">
+			job.id job_basic_id,
+		</if>
+		(SELECT sd.dict_name FROM system_dict sd WHERE sd.dict_type = 'JOB_TYPE' AND sd.dict_code =job.job_type ) job_type,
+		  '1' run_status,	
+		 '未运行' run_status_zh,
+		CASE
+			WHEN pjr.starting_work = '0' THEN '起点'
+	    WHEN pjr.starting_work = '1' THEN '终点'
+	    ELSE '普通'
+		END AS starting_work,
+		(SELECT sd.dict_name FROM system_dict sd WHERE sd.dict_type = 'OPERATING_FREQUENCY' AND sd.dict_code =  pjr.operating_frequency ) operating_frequency,
+      	CASE  WHEN pjr.operating_frequency = 2 THEN
+					(SELECT sd.dict_name FROM system_dict sd WHERE sd.dict_type = 'JOB_RUN_DATE_WEEK' AND sd.dict_code =  pjr.run_date) 
+  	          WHEN pjr.operating_frequency = 3 THEN
+					(SELECT sd.dict_name FROM system_dict sd WHERE sd.dict_type = 'JOB_RUN_DATE_MONTH' AND sd.dict_code =  pjr.run_date) 
+					else '无' end as run_date,
+ 	pjr.run_time,
+ 	pjr.last_job_name
+FROM
+	t_process_job_relation pjr
+LEFT JOIN t_job_basic job ON pjr.job_basic_id = job.id
+WHERE
+	1 = 1
+ <include refid="dynamicPageWhere" />
+ order by pjr.create_time desc 
+  </select>
+  
+   <!-- 查询总条数 -->
+  <select id="findAllByPageCount" parameterType="hashmap" resultType="long">
+ 	SELECT
+	  	count(*)
+	 FROM
+		 t_process_job_relation pjr
+ 	LEFT JOIN t_job_basic job ON pjr.job_basic_id = job.id
+	 where  1= 1
+ <include refid="dynamicPageWhere" />
+  </select>
+  
+  
+  <!-- 初始化上一作业名称 -->
+  <select id="findLastJobByProcessId" parameterType="hashmap" resultType="hashmap">
+  SELECT
+  	  job.id,
+  	   pjr.level,
+	  job.job_name
+  FROM
+	 t_process_job_relation pjr
+  LEFT JOIN t_job_basic job ON pjr.job_basic_id = job.id
+  where pjr.process_id = #{processId}
+  <if test="jobBasicId != null">
+  	and pjr.job_basic_id != #{jobBasicId}
+  </if>
+  order by pjr.level asc
+  </select>
+  
+  <!-- 修改子节点 回显 -->
+  <select id="findRelationById" parameterType="int" resultType="hashmap">
+   SELECT
+  	  pjr.id,
+	  job.job_name,
+	  job.job_sketch,
+	  case when pjr.starting_work = '0' then '是'
+	  else '否' end as starting_work_zh,
+	  pjr.starting_work,
+      pjr.operating_frequency,
+      pjr.run_date,
+      pjr.last_job_name,
+      pjr.job_basic_id,
+      pjr.run_time,
+      pjr.process_id
+  FROM
+	 t_process_job_relation pjr
+  LEFT JOIN t_job_basic job ON pjr.job_basic_id = job.id
+  where pjr.id = #{id}
+  </select>
+  
+  
+  <!-- 根据流程id 删除 -->
+  <delete id="deleteByProcessId" parameterType="int">
+ 	 DELETE
+	FROM
+		t_process_job_relation
+	WHERE
+		process_id =#{processId}
+  </delete>
+  
+  
+   <select id="findFirstJob" parameterType="hashmap" resultType="hashmap">
+   SELECT
+   		id
+	FROM
+	t_process_job_relation
+	<where>
+		1=1 
+		 <if test="startingWork != null and startingWork !='' "> 
+			and starting_work = #{startingWork,jdbcType=VARCHAR}
+		</if>
+		 <if test="processId != null "> 
+			and process_id =#{processId}
+		</if>
+	</where>
+  </select>
+  
+  <delete id="deleteJobRelation" parameterType="hashmap">
+  	delete FROM
+		t_process_job_relation
+	WHERE
+		process_id =#{processId}
+    and  id NOT IN (${ids})
+  </delete>
+  
+  <select id="findListOrderByLevel" parameterType="hashmap" resultType="hashmap">
+   SELECT
+	  pjr.id,
+	  job.job_name,
+	  job.job_sketch,
+	  job.job_url,
+	  job.job_type,
+	  job.job_status,
+	  job.job_number,
+	  pjr.starting_work,
+      pjr.operating_frequency,
+      pjr.run_date,
+      pjr.last_job_name,
+      pjr.process_id,
+      pjr.level,
+      pjr.job_basic_id
+	FROM
+	t_process_job_relation pjr
+ 	LEFT JOIN t_job_basic job ON pjr.job_basic_id = job.id
+	<where>
+		1=1 
+		 <if test="startingWork != null and startingWork !='' "> 
+			and pjr.starting_work = #{startingWork,jdbcType=VARCHAR}
+		</if>
+		 <if test="processId != null "> 
+			and pjr.process_id =#{processId}
+	    </if>
+	</where>
+	order  by pjr.level asc,pjr.starting_work desc 
+	</select>
+	
+	<!-- 通过作业id和流程id查询作业级别 -->
+	<select id="findNextLevel" parameterType="hashmap" resultType="String">
+		SELECT
+			IFNULL(group_concat(level), '') levels
+		FROM
+			t_process_job_relation
+		WHERE 1=1
+		<if test="ids != ''">
+			AND job_basic_id IN
+			<foreach item="item" index="index" collection="ids.split(',')"  open="(" separator="," close=")">
+	                ${item}
+	   		</foreach>
+   		</if>
+		AND process_id = #{processId}
+	</select>
+	
+	
+  <!-- 查询流程下面的节点 -->
+  <select id="findByParams" parameterType="String" resultType="hashmap">
+  	SELECT
+  	    "1" flag,
+		pjr.id,
+		job.job_name,
+		job.job_sketch,
+		job.job_number,
+		pjr.process_id,
+		<if test="flag == 1 ">
+			job.id job_basic_id,
+		</if>
+		(SELECT sd.dict_name FROM system_dict sd WHERE sd.dict_type = 'JOB_TYPE' AND sd.dict_code =job.job_type ) job_type,
+		  '1' run_status,	
+		 '未运行' run_status_zh,
+		CASE
+			WHEN pjr.starting_work = '0' THEN '起点'
+	    WHEN pjr.starting_work = '1' THEN '终点'
+	    ELSE '普通'
+		END AS starting_work,
+		(SELECT sd.dict_name FROM system_dict sd WHERE sd.dict_type = 'OPERATING_FREQUENCY' AND sd.dict_code =  pjr.operating_frequency ) operating_frequency,
+      	CASE  WHEN pjr.operating_frequency = 2 THEN
+					(SELECT sd.dict_name FROM system_dict sd WHERE sd.dict_type = 'JOB_RUN_DATE_WEEK' AND sd.dict_code =  pjr.run_date) 
+  	          WHEN pjr.operating_frequency = 3 THEN
+					(SELECT sd.dict_name FROM system_dict sd WHERE sd.dict_type = 'JOB_RUN_DATE_MONTH' AND sd.dict_code =  pjr.run_date) 
+					else '无' end as run_date,
+ 	pjr.run_time,
+ 	pjr.last_job_name
+FROM
+	t_process_job_relation pjr
+LEFT JOIN t_job_basic job ON pjr.job_basic_id = job.id
+		<where>
+			1=1 
+			<if test="ids!=null">
+				and pjr.id in 
+				 <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+	              	 #{item}       
+	       		 </foreach>
+			</if>
+		</where>
+ <include refid="dynamicPageWhere" />
+ order by pjr.create_time desc 
+  </select>
+	
+	
+	<insert id="insertAndReturnLastId" parameterType="com.resale.background.pojo.ProcessJobRelation">
+    insert into t_process_job_relation
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="processId != null">
+        process_id,
+      </if>
+      <if test="jobBasicId != null">
+        job_basic_id,
+      </if>
+      <if test="level != null">
+        level,
+      </if>
+      <if test="operatingFrequency != null">
+        operating_frequency,
+      </if>
+      <if test="runDate != null">
+        run_date,
+      </if>
+      <if test="runTime != null">
+        run_time,
+      </if>
+      <if test="startingWork != null">
+        starting_work,
+      </if>
+      <if test="lastJobName != null">
+        last_job_name,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="operator != null">
+        operator,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="processId != null">
+        #{processId,jdbcType=INTEGER},
+      </if>
+      <if test="jobBasicId != null">
+        #{jobBasicId,jdbcType=INTEGER},
+      </if>
+      <if test="level != null">
+        #{level,jdbcType=VARCHAR},
+      </if>
+      <if test="operatingFrequency != null">
+        #{operatingFrequency,jdbcType=VARCHAR},
+      </if>
+      <if test="runDate != null">
+        #{runDate,jdbcType=VARCHAR},
+      </if>
+      <if test="runTime != null">
+        #{runTime,jdbcType=VARCHAR},
+      </if>
+      <if test="startingWork != null">
+        #{startingWork,jdbcType=VARCHAR},
+      </if>
+      <if test="lastJobName != null">
+        #{lastJobName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operator != null">
+        #{operator,jdbcType=VARCHAR},
+      </if>
+    </trim>
+    
+      <selectKey resultType="Integer" order="AFTER" keyProperty="id">
+    	SELECT LAST_INSERT_ID() AS id
+	</selectKey>
+  </insert>
+</mapper>

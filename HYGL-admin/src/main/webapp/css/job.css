@@ -1,0 +1,23 @@
+.form-title {
+	font-family: PingFangSC-Semibold;
+	font-size: 16px;
+	color: #000000;
+	letter-spacing: 0;
+	line-height: 14px;
+	padding-left: 15px;
+	position: relative;
+	line-height: 1.5;
+	margin-bottom: 20px;
+}
+.form-title:before {
+    content:'';
+    display: block; 
+    width: 4px; height: 14px;
+    background: #3872FF;
+	border-radius: 1px;
+	position: absolute; left: 0; top: 50%; margin-top: -7px;
+}
+
+.form-group .help-block {
+    color: #f00;
+}
