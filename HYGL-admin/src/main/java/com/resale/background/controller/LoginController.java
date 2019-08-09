@@ -16,7 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.resale.background.constants.MenuConstants;
 import com.resale.background.pojo.Employee;
 import com.resale.background.pojo.Menu;
 import com.resale.background.service.MenuService;
@@ -60,12 +59,6 @@ public class LoginController {
     		List<Menu>menuList=menuService.getMenuByEmployeeId(employee.getEmployeeId());
     		model.addAttribute("mlist",menuList);
     		model.addAttribute("employee",employee);
-    		Menu history = menuService.getIdByNameZh(MenuConstants.LCYXLS);
-    		Menu monitor = menuService.getIdByNameZh(MenuConstants.LCJK);
-    		Menu config = menuService.getIdByNameZh(MenuConstants.LCPZ);
-    		model.addAttribute("history", history);
-    		model.addAttribute("monitor", monitor);
-    		model.addAttribute("config", config);
             return "index";
 		} catch (Exception e) {
 			e.printStackTrace();
