@@ -33,4 +33,12 @@ public interface MemberMapper {
 	List<Map<String, Object>> findAllRetMapByPage(Map<String, Object> paramsCondition);
 
 	Long findAllByPageCount(Map<String, Object> paramsCondition);
+
+	void deleteMember(Member member);
+
+	Member checkPwd(Member member);
+
+	void updateTotalMoney(Member member);
+
+	void updateResidueMoney(Member member);
 }

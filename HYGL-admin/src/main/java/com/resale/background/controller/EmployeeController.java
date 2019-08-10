@@ -8,10 +8,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.crypto.hash.SimpleHash;
-import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,7 +128,6 @@ public class EmployeeController extends BaseController {
 	public boolean checkOldPwd(@RequestParam("employeeId") int employeeId, @RequestParam("oldPwd") String oldPwd) {
 		try {
 			Employee employee = employeeService.getEmployeeById(employeeId);
-
 			String newPs = new SimpleHash("MD5", oldPwd, employee.getEmployeeNo() + employee.getSalt(), 2).toHex();
 			return employeeService.checkOldPwd(employeeId, oldPwd, newPs);
 		} catch (Exception e) {
@@ -191,8 +188,7 @@ public class EmployeeController extends BaseController {
 
 			String uuid = UUIDUtil.getUUID();
 			String newPs = new SimpleHash("MD5", employee.getPassword(), employee.getEmployeeNo() + uuid, 2).toHex();
-			Subject subject = SecurityUtils.getSubject();
-			Employee employeeShiro = (Employee) subject.getPrincipal();
+			Employee employeeShiro =getCurrentEmployee();
 			DateFormat date = new SimpleDateFormat("yyyy-MM-dd");
 			if (StringUtil.isNotEmpty(entryDate)) {
 				employee.setEntryTime(date.parse(entryDate));

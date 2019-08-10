@@ -20,7 +20,7 @@
 <div class="loginBox logBackground">
     <form id="form"   method="post" >
         <div style="text-align: center;font-size: 26px; color: #9A9A9A; letter-spacing: 0.18px; line-height:50px;margin-bottom: 12px;"> 
-        	流程监控系统
+        	会员管理系统
         </div>
         <ul class="login">
             <li>

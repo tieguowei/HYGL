@@ -8,22 +8,14 @@ var Member = {
 };
 
 $(function (){
-	//select2 多选
-    $("#employee_rid").select2({
-        language: "zh-CN", //设置 提示语言
-        maximumSelectionLength: 1000,  //设置最多可以选择多少项
-        //width: "100%", //设置下拉框的宽度
-        placeholder: "请选择",
-        tags: false  //输入无效
-    });
-    Employee.formValidator();
-    Employee.init();
+    Member.formValidator();
+    Member.init();
     $('.close').click(function(){
-    	Employee.closeDlg();
+    	Member.closeDlg();
 	 });
 });
 //表格数据展示
-var Employee = function (){
+var Member = function (){
     return{
         init:function (){
             $('#member-table').bootstrapTable({
@@ -45,17 +37,17 @@ var Employee = function (){
                 pageSize : 5, //默认每页条数
                 pageNumber : 1, //默认分页
                 pageList : [ 5, 10, 20, 50],//分页数
-                toolbar:"#toolbar",
+                toolbar:"#memberToolbar",
                 showColumns : false, //显示隐藏列
-                uniqueId: "employee_id", //每一行的唯一标识，一般为主键列
+                uniqueId: "member_id", //每一行的唯一标识，一般为主键列
                 queryParamsType:'',
-                queryParams: Employee.queryParams,//传递参数（*）
+                queryParams: Member.queryParams,//传递参数（*）
                 clickToSelect: true,
                 columns : [{
                     checkbox: true
                 	},{
     					title: '序号',//标题  可不加
-    					width : '50',
+    					width : '40',
     					align : "center",
     					valign : "middle",
     		            switchable:false,
@@ -66,61 +58,64 @@ var Employee = function (){
     		            }
     	             },{
                         field : "member_no",
-                        title : "会员卡号",
+                        title : "卡号",
+                        width:30,
                         align : "center",
                         valign : "middle",
                         sortable : "true"
                 },{
                     field : "member_name",
                     title : "会员姓名",
-                    align : "center",
-                    valign : "middle",
-                    sortable : "true"
-                }, {
-                    field : "member_sex",
-                    title : "会员性别",
+                    width:50,
                     align : "center",
                     valign : "middle",
                     sortable : "true"
                 },{
                     field : "member_phone",
                     title : "手机号",
+                    width:50,
                     align : "center",
                     valign : "middle",
                     sortable : "true"
                 }, {
                     field : "member_birthday",
                     title : "会员生日",
+                    width:50,
                     align : "center",
                     valign : "middle",
                     sortable : "true"
                 }, {
                     field : "total_money",
-                    title : "充值金额",
+                    title : "总金额",
+                    width:50,
                     align : "center",
                     valign : "middle",
                     sortable : "true"
                 }, {
                     field : "residue_money",
-                    title : "剩余金额",
+                    title : "可用余额",
+                    width:50,
                     align : "center",
                     valign : "middle",
                     sortable : "true"
                 }, {
                     field : "aggregate_score",
                     title : "总积分",
+                    width:50,
                     align : "center",
                     valign : "middle",
                     sortable : "true"
                 }, {
                     field : "residue_score",
-                    title : "剩余积分",
+                    title : "可用积分",
+                    width:50,
                     align : "center",
                     valign : "middle",
                     sortable : "true"
                 },{
                     field : "create_time",
                     title : "开卡时间",
+                    width:50,
                     align : "center",
                     valign : "middle",
                     sortable : "true"
@@ -129,6 +124,7 @@ var Employee = function (){
                     title : "操作人",
                     align : "center",
                     valign : "middle",
+                    width:50,
                     sortable : "true"
                 },{
                     field: 'operate',
@@ -143,8 +139,8 @@ var Employee = function (){
             var temp = {
                 pageSize: params.pageSize,  //页面大小
                 pageNumber: params.pageNumber, //页码
-                employeeNo: $("#search_employee_no").val(),
-                employeeName:$("#search_employee_name").val(),
+                memberPhone: $("#search_member_phone").val(),
+                memberName:$("#search_member_name").val(),
             };
             return temp;
         },
@@ -152,124 +148,53 @@ var Employee = function (){
          * 检查是否选中单条记录
          */
         checkSingleData:function () {
-            var selected = $('#employee-table').bootstrapTable('getSelections');
+            var selected = $('#member-table').bootstrapTable('getSelections');
             if (selected.length == 0) {
             	 $.alert({
                      title: '提示信息！',
-                     content: '至少选择一条记录！',
+                     content: '请选择会员！',
                      type: 'red'
                  });
                 return false;
             }else if (selected.length > 1){
             	 $.alert({
                      title: '提示信息！',
-                     content: '该操作只能选择一条记录!',
+                     content: '该操作只能选择一位会员!',
                      type: 'blue'
                  });
             }else {
-            	Employee.seItem = selected[0];
+            	Member.seItem = selected[0];
                 return true;
             }
-        },
-        //角色分配
-        getRole:function(){
-        	if(this.checkSingleData()) {
-        		var employeeId = Employee.seItem.employee_id;
-                $.ajax({
-                    url:'employee/getRole',
-                    dataType:'json',
-                    type:'post',
-                    traditional:true,
-                    data:{
-                    	employeeId:employeeId
-                    },
-                    success:function(data){
-                        $("#employee_rid").empty();
-                        $.each(data.role,function(index,items){
-                            $("#employee_rid").append("<option value='"+items.id+"'>"+items.roleName+"</option>");
-                        });
-                        if((data.userRole!=null)){
-                            $.each(data.userRole,function(index,items){
-                                $("#employee_rid").val(data.userRole).trigger("change");//select2 选中
-                            });
-                        }else{
-                            $("#employee_rid").val(0).trigger("change");
-                        }
-                        $("#employeeRoleDlg").modal('show');
-                    },
-                    error:function(){
-                        $.alert({
-                            title: '提示信息！',
-                            content: '请求失败！',
-                            type: 'red'
-                        });
-                    }
-                })
-                
-        	}
-        },
-        //保存修改角色
-        saveRole:function(){
-        	var employeeId = Employee.seItem.employee_id;
-            var rids=$("#employee_rid").val();//select2 获取多选值
-            $.ajax({
-                url:'employee/updateEmployeeRole',
-                dataType:'json',
-                type:'post',
-                traditional:true,
-                data:{
-                    employeeId:employeeId,
-                    rid:rids
-                },
-                success:function(data){
-                    if(data){
-                        $.alert({
-                            title: '提示信息！',
-                            content: '保存成功！',
-                            type: 'blue'
-                        });
-                        Employee.closeDlg();
-                        $("#employee-table").bootstrapTable('refresh');
-                    }else{
-                        $.alert({
-                            title: '提示信息！',
-                            content: '保存失败！',
-                            type: 'red'
-                        });
-                       
-                    }
-                }
-            })
         },
         //修改前，打开模态框
         openUpdateModal:function(){
         	if (this.checkSingleData()) {
-        		var employeeId = Employee.seItem.employee_id;
+        		var memberId = Member.seItem.member_id;
         		 $.ajax({
-                     url:'employee/getEmployeeById',
+                     url:'member/getMemberById',
                      dataType:'json',
                      type:'post',
                      data:{
-                     	employeeId:employeeId
+                     	memberId:memberId
                      },
                      success:function(data){
-                         $("#update_employee_id").val(data.employee.employeeId);
-                         $("#update_employee_name").val(data.employee.name);
-                         $("#update_employee_no").val(data.employee.employeeNo);
-                         $("#update_email").val(data.employee.email);
-                         $("#update_telephone").val(data.employee.telephone);
-                         $("#update_card_no").val(data.employee.cardNo);
-                         $("#update_entry_time").val(data.employee.entryTime);
-                         $("#employee_update_dept_id").val(data.employee.deptId);
-                         $("#update_departmentname").val(data.employee.departmentname);
-                         if(data.employee.sex==0){
-                         	  document.getElementById("update_employee_sex0").checked = true;
+                         $("#update_member_id").val(data.member.memberId);
+                         $("#update_member_name").val(data.member.memberName);
+                         $("#update_member_phone").val(data.member.memberPhone);
+                         $("#update_email").val(data.member.email);
+                         $("#update_telephone").val(data.member.telephone);
+                         $("#update_card_no").val(data.member.cardNo);
+                         $("#update_entry_time").val(data.member.memberBirthday);
+                         $("#update_total_money").val(data.member.totalMoney);
+                         $("#update_aggregate_score").val(data.member.aggregateScore);
+                         if(data.member.memberSex==0){
+                         	  document.getElementById("update_member_sex0").checked = true;
                          	}
-                         	if(data.employee.sex==1){
-                         	  document.getElementById("update_employee_sex1").checked = true;
+                         	if(data.member.memberSex ==1){
+                         	  document.getElementById("update_member_sex1").checked = true;
                          	}
-                         $("#update_employee_mobile").val(data.employee.mobile);
-                         $("#employeeUpdateDlg").modal('show');
+                         $("#memberUpdateDlg").modal('show');
                      },
                      error:function(){
                          $.alert({
@@ -282,14 +207,14 @@ var Employee = function (){
         	}
            
         },
-        //修改用户
-        updateEmployee:function(){
-            if($("#employeeUpdateForm").data("bootstrapValidator").validate().isValid()){
+        //修改会员
+        updateMember:function(){
+            if($("#memberUpdateForm").data("bootstrapValidator").validate().isValid()){
                 $.ajax({
-                    url:'employee/updateEmployee',
+                    url:'member/updateMember',
                     dataType:'json',
                     type:'post',
-                    data:$("#employeeUpdateForm").serialize(),
+                    data:$("#memberUpdateForm").serialize(),
                     success:function(data){
                         if(data){
                             $.alert({
@@ -297,8 +222,8 @@ var Employee = function (){
                                 content: '修改成功！',
                                 type: 'blue'
                             });
-                            Employee.closeDlg();
-                            $("#employee-table").bootstrapTable('refresh');
+                            Member.closeDlg();
+                            $("#member-table").bootstrapTable('refresh');
                         }else{
                             $.alert({
                                 title: '提示信息！',
@@ -306,49 +231,44 @@ var Employee = function (){
                                 type: 'red'
                             });
                         }
-                       
                     }
                 });
             }
         },
-        
         //删除
-        deleteEmployee:function(activatedState){
-        	
+        deleteMember:function(){
         	if (this.checkSingleData()) {
-        		var employeeId = Employee.seItem.employee_id;
+        		var memberId = Member.seItem.member_id;
         		$.confirm({
                     title: '提示信息!',
-                    content: '您确定要提交更改吗？',
-                    type: 'blue',
+                    content: '您确定要删除吗？',
+                    type: 'red',
                     typeAnimated: true,
                     buttons: {
                         确定: {
                             action: function(){
-                            	
                                $.ajax({
-                                    url:'employee/deleteEmployee',
+                                    url:'member/deleteMember',
                                     dataType:'json',
                                     type:'post',
                                     data:{
-                                    	employeeId:employeeId,
-                                    activatedState:activatedState
+                                    	memberId:memberId
                                     },
                                     success:function(data){
                                         if(data){
                                             $.alert({
                                                 title: '提示信息！',
-                                                content: '修改成功!',
+                                                content: '删除成功!',
                                                 type: 'blue'
                                             });
                                         }else{
                                             $.alert({
                                                 title: '提示信息！',
-                                                content: '修改失败!',
+                                                content: '删除失败!',
                                                 type: 'red'
                                             });
                                         }
-                                        $("#employee-table").bootstrapTable('refresh');
+                                        $("#member-table").bootstrapTable('refresh');
                                     },
                                     error:function(){
                                         $.alert({
@@ -367,19 +287,18 @@ var Employee = function (){
         	}
             
         },
-        //添加，打开模态框
+        //添加会员，打开模态框
         openDlg:function(){
-            $("#employeeAddDlg").modal('show');
+            $("#memberAddDlg").modal('show');
         },
-        //添加用户
-        saveEmployee:function(){
-        	document.getElementById("saveEmployeeButton").setAttribute("disabled", true);
-           if($("#addEmployeeForm").data('bootstrapValidator').validate().isValid()){
+        //添加会员
+        saveMember:function(){
+           if($("#addMemberForm").data('bootstrapValidator').validate().isValid()){
               $.ajax({
-                    url:'employee/saveEmployee',
+                    url:'member/saveMember',
                     type:'post',
                     dataType:'json',
-                    data:$("#addEmployeeForm").serialize(),
+                    data:$("#addMemberForm").serialize(),
                     success:function(data){
                         if(data){
                             $.alert({
@@ -387,17 +306,15 @@ var Employee = function (){
                                 content: '添加成功!',
                                 type: 'blue'
                             });
-						    document.getElementById("saveEmployeeButton").removeAttribute("disabled");
+                            $("#member-table").bootstrapTable('refresh');
+                            Member.closeDlg();
                         }else{
                             $.alert({
                                 title: '提示信息！',
                                 content: '添加失败！',
                                 type: 'red'
                             });
-						    document.getElementById("saveEmployeeButton").removeAttribute("disabled");
                         }
-                        $("#employee-table").bootstrapTable('refresh');
-                        Employee.closeDlg();
                     },
                     error:function(){
                         $.alert({
@@ -407,43 +324,137 @@ var Employee = function (){
                         });
                     }
                 });
-            }else{
-            	document.getElementById("saveEmployeeButton").removeAttribute("disabled");
             }
         },
         //关闭模态框
         closeDlg:function () {
-            $("#employeeRoleDlg").modal('hide');
-            $("#employeeUpdateDlg").modal('hide');
-            $("#employeeAddDlg").modal('hide');
+            $("#memberUpdateDlg").modal('hide');//修改dlg
+            $("#memberAddDlg").modal('hide');//新增dlg
+            $("#rechargeDlg").modal('hide');//充值dlg
+            $("#consumeDlg").modal('hide');//消费dlg
+            $("#rechargeDlg").modal('hide');//扣分dlg
             $("input[type=reset]").trigger("click");
-            $('#addEmployeeForm').data('bootstrapValidator', null);
-            $('#employeeUpdateForm').data('bootstrapValidator', null);
-		    document.getElementById("saveEmployeeButton").removeAttribute("disabled");
-            Employee.formValidator();
+            $('#addMemberForm').data('bootstrapValidator', null);
+            $('#memberUpdateForm').data('bootstrapValidator', null);
+            Member.formValidator();
+        },
+        //充值，打开模态框
+        openRecharge:function(){
+        	if (this.checkSingleData()) {
+        		$("#rechargeDlg").modal('show');
+        		var member = Member.seItem;
+        		$("#recharge_member_id").val(member.member_id);
+        		$("#recharge_member_name").val(member.member_name);
+        		$("#recharge_member_phone").val(member.member_phone);
+        	}
+        },
+        //充值
+        recharge:function(){
+           if($("#rechargeForm").data('bootstrapValidator').validate().isValid()){
+              $.ajax({
+                    url:'member/recharge',
+                    type:'post',
+                    dataType:'json',
+                    data:$("#rechargeForm").serialize(),
+                    success:function(data){
+                        if(data){
+                            $.alert({
+                                title: '提示信息！',
+                                content: '充值成功!',
+                                type: 'blue'
+                            });
+                            Member.closeDlg();
+                            $("#member-table").bootstrapTable('refresh');
+                        }else{
+                        	 $.alert({
+                                 title: '提示信息！',
+                                 content: '充值失败！',
+                                 type: 'red'
+                             });
+                        }
+                    },
+                    error:function(){
+                        $.alert({
+                            title: '提示信息！',
+                            content: '请求失败！',
+                            type: 'red'
+                        });
+                    }
+                });
+            }
+        },
+      //消费，打开模态框
+        openConsume:function(){
+        	if (this.checkSingleData()) {
+        		$("#consumeDlg").modal('show');
+        		var member = Member.seItem;
+        		$("#consume_member_id").val(member.member_id);
+        		$("#consume_member_name").val(member.member_name);
+        		$("#consume_member_phone").val(member.member_phone);
+        		$("#consume_residue_money").val(member.residue_money);
+        	}
+        },
+        //消费
+        consume:function(){
+           if($("#consumeForm").data('bootstrapValidator').validate().isValid()){
+              $.ajax({
+                    url:'member/consume',
+                    type:'post',
+                    dataType:'json',
+                    data:$("#consumeForm").serialize(),
+                    success:function(data){
+                        if(data == '1'){
+                            $.alert({
+                                title: '提示信息！',
+                                content: '消费成功!',
+                                type: 'blue'
+                            });
+                            Member.closeDlg();
+                            $("#member-table").bootstrapTable('refresh');
+                        }else if(data == '2'){
+                            $.alert({
+                                title: '提示信息！',
+                                content: '密码错误！',
+                                type: 'red'
+                            });
+                        }else if(data == '3'){
+                            $.alert({
+                                title: '提示信息！',
+                                content: '余额不足！',
+                                type: 'red'
+                            });
+                        }else{
+                        	 $.alert({
+                                 title: '提示信息！',
+                                 content: '消费失败！',
+                                 type: 'red'
+                             });
+                        }
+                    },
+                    error:function(){
+                        $.alert({
+                            title: '提示信息！',
+                            content: '请求失败！',
+                            type: 'red'
+                        });
+                    }
+                });
+            }
         },
         formValidator:function () {
-            $("#addEmployeeForm").bootstrapValidator({
+            $("#addMemberForm").bootstrapValidator({
                 fields:{
-                	name:{
+                	memberName:{
                         validators:{
                             notEmpty:{
-                                message:"姓名不能为空"
-                            },
-                            stringLength:{
-                                max:20,
-                                message:"字符长度不能超过20个字符"
+                                message:"会员姓名不能为空"
                             }
                         }
                     },
-                    employeeNo:{
+                    memberPhone:{
                         validators:{
                             notEmpty:{
-                                message:"员工编号不能为空"
-                            },
-                            stringLength:{
-                                max:20,
-                                message:"字符长度不能超过20个字符"
+                                message:"会员手机号不能为空"
                             }
                         }
                     }
@@ -451,27 +462,50 @@ var Employee = function (){
             });
 
 
-            $("#employeeUpdateForm").bootstrapValidator({
+            $("#memberUpdateForm").bootstrapValidator({
                 fields:{
-                	name:{
+                	memberName:{
                         validators:{
                             notEmpty:{
                                 message:"姓名不能为空！"
-                            },
-                            stringLength:{
-                                max:20,
-                                message:"字符长度不能超过20个字符"
                             }
                         }
                     },
-                    employeeNo:{
+                    memberPhone:{
                         validators:{
                             notEmpty:{
-                                message:"员工编号不能为空"
-                            },
-                            stringLength:{
-                                max:20,
-                                message:"字符长度不能超过20个字符"
+                                message:"手机号不能为空"
+                            }
+                        }
+                    }
+                }
+            });
+            
+            $("#rechargeForm").bootstrapValidator({
+                fields:{
+                	totalMoney:{
+                        validators:{
+                            notEmpty:{
+                                message:"充值金额不能为空"
+                            }
+                        }
+                    }
+                }
+            });
+            
+            $("#consumeForm").bootstrapValidator({
+                fields:{
+                	totalMoney:{
+                        validators:{
+                            notEmpty:{
+                                message:"消费金额不能为空"
+                            }
+                        }
+                    },
+                    memberPwd:{
+                        validators:{
+                            notEmpty:{
+                                message:"消费密码不能为空"
                             }
                         }
                     }
@@ -479,71 +513,21 @@ var Employee = function (){
             });
         },
         //搜索
-        searchEmployee:function () {
-            $("#employee-table").bootstrapTable('refresh');
+        searchMember:function () {
+            $("#member-table").bootstrapTable('refresh');
         },
         //清空
         empty:function () {
-            $("#search_employee_no").val('');
-            $("#search_employee_name").val('');
-            $("#employee-table").bootstrapTable('refresh');
+            $("#search_member_phone").val('');
+            $("#search_member_name").val('');
+            $("#member-table").bootstrapTable('refresh');
         }
     }
 }();
-$(document).ready(function(){
-  	 $("#department_name").click(function() {
-  		$("#parentIdtreeview").show();
-  		 $.ajax({
-  		        url:'dept/getDeptTree',
-  		        dataType:'json',
-  		        type:'post',
-  		        data:{rid:1},
-  		        success:function(data){
-  		        	$('#parentIdtreeview').treeview({
-  	                     color: "#428bca",
-  	                     expandIcon: 'glyphicon glyphicon-chevron-right',
-  	                     collapseIcon: 'glyphicon glyphicon-chevron-down',
-  	                     nodeIcon: 'glyphicon glyphicon-bookmark',
-  	                     data: data,
-  	                     onNodeSelected: function(event, node) {
-  	                    		$("#department_name").val(node.text);
-  	                    		$("#employee_dept_id").val(node.id);
-  	        					$("#parentIdtreeview").hide();
-  	                       },
-  	                   });
-  		        }
-  		      });
-  		});
-  	 	
-     	 $("#update_departmentname").click(function() {
-       		$("#update_parentIdtreeview").show();
-       		 $.ajax({
-       		        url:'dept/getDeptTree',
-       		        dataType:'json',
-       		        type:'post',
-       		        data:{rid:1},
-       		        success:function(data){
-       		        	$('#update_parentIdtreeview').treeview({
-       	                     color: "#428bca",
-       	                     expandIcon: 'glyphicon glyphicon-chevron-right',
-       	                     collapseIcon: 'glyphicon glyphicon-chevron-down',
-       	                     nodeIcon: 'glyphicon glyphicon-bookmark',
-       	                     data: data,
-       	                     onNodeSelected: function(event, node) {
-       	                    		$("#update_departmentname").val(node.text);
-       	                    		$("#employee_update_dept_id").val(node.id);
-       	        					$("#update_parentIdtreeview").hide();
-       	                       },
-       	                   });
-       		        }
-       		      });
-       		});
-  });
-
 function operateBasicFormatter(value, row, index) {
 	return [
-	    	'<input style="background:#23c6c8;  height: 30px;width: 80px;color: white; line-height:20px" type="button"  value="账单" />',
-	    	'<input style="background:#23c6c8;  height: 30px;width: 80px;color: white; line-height:20px" type="button"  value="积分详情" />'
+	    	'<input style="background:#23c6c8;  height: 30px;width: 60px;color: white; line-height:20px" type="button"  value="账单" />',
+	    	'<input style="background:#23c6c8;  height: 30px;width: 70px;color: white; line-height:20px" type="button"  value="积分详情" />'
 
         ].join('');
 };

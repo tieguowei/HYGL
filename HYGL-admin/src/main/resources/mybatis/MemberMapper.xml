@@ -387,6 +387,7 @@
 		m.member_id,
 		m.member_no,
 		m.member_name,
+		m.member_phone,
 		case when m.member_sex = '0' then '女'
 		when m.member_sex = '1' then '男'
 		end as member_sex,
@@ -408,7 +409,35 @@
   
    <!-- 查询总条数 -->
   <select id="findAllByPageCount" parameterType="hashmap" resultType="long">
- 	 SELECT count(*) FROM t_member  WHERE m.member_status = '0'
+ 	 SELECT count(*) FROM t_member m  WHERE m.member_status = '0'
  	 <include refid="whereClause" />
   </select>
+  
+  <update id="deleteMember" parameterType="com.resale.background.pojo.Member">
+	UPDATE t_member
+	SET member_status = '1',
+	update_time = now(),
+	operator = #{operator}
+	WHERE
+	member_id = #{memberId}
+  </update>
+  <!-- 检查密码是否正确 -->
+  <select id="checkPwd" parameterType="com.resale.background.pojo.Member"  resultMap="BaseResultMap">
+   	select residue_money from t_member where  member_id = #{memberId} and member_pwd = #{memberPwd}
+  </select>
+  <!-- 充值 - 修改总金额和可用余额 -->
+  <update id="updateTotalMoney" parameterType="com.resale.background.pojo.Member">
+ 	update  t_member SET
+	 	 total_money = total_money + #{totalMoney}, 
+	 	residue_money=residue_money+#{totalMoney},
+	 	update_time = now(),operator = #{operator} 
+ 	where  member_id = #{memberId}
+  </update>
+  
+  <!-- 消费 - 修改可用额 -->
+  <update id="updateResidueMoney" parameterType="com.resale.background.pojo.Member">
+ 	update  t_member SET residue_money = residue_money 
+ 	- #{totalMoney},
+ 	update_time = now(),operator = #{operator} where  member_id = #{memberId}
+  </update>
 </mapper>

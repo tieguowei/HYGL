@@ -3,6 +3,8 @@ package com.resale.background.pojo;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class Member {
     private Integer memberId;
 
@@ -13,7 +15,8 @@ public class Member {
     private String memberSex;
 
     private String memberPhone;
-
+    
+    @JsonFormat(pattern="yyyy-MM-dd",timezone="GMT+8")
     private Date memberBirthday;
 
     private String memberPwd;
@@ -27,9 +30,16 @@ public class Member {
     private Integer residueScore;
 
     private String memberStatus;
-
+    
+    //是否重置密码
+    private String isResetPwd;
+    //备注
+    private String remark;
+    
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date createTime;
 
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date updateTime;
 
     private Integer operator;
@@ -70,12 +80,28 @@ public class Member {
         return memberBirthday;
     }
 
-    public String getMemberSex() {
+    public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getMemberSex() {
 		return memberSex;
 	}
 
 	public void setMemberSex(String memberSex) {
 		this.memberSex = memberSex;
+	}
+
+	public String getIsResetPwd() {
+		return isResetPwd;
+	}
+
+	public void setIsResetPwd(String isResetPwd) {
+		this.isResetPwd = isResetPwd;
 	}
 
 	public void setMemberBirthday(Date memberBirthday) {
