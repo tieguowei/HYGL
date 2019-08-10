@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.resale.background.mapper.MemberBillMapper;
 import com.resale.background.mapper.MemberMapper;
 import com.resale.background.mapper.MemberScoreMapper;
-import com.resale.background.mapper.SystemDictMapper;
 import com.resale.background.pojo.Member;
 import com.resale.background.pojo.MemberBill;
 import com.resale.background.pojo.MemberScore;

@@ -80,6 +80,15 @@ var MemberBirthday = function (){
                 }],
                
             });
-        }
+        },
+        queryBirthParams:function(params){
+            var temp = {
+                pageSize: params.pageSize,  //页面大小
+                pageNumber: params.pageNumber, //页码
+                memberPhone: $("#search_member_phone").val(),
+                memberName:$("#search_member_name").val(),
+            };
+            return temp;
+        },
     }
 }

@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONArray;
 import com.resale.background.base.controller.BaseController;
+import com.resale.background.constants.Constants;
 import com.resale.background.pojo.Employee;
 import com.resale.background.pojo.Member;
 import com.resale.background.service.MemberService;
@@ -339,6 +340,12 @@ public class MemberController extends BaseController {
 			Employee employee = getCurrentEmployee();
 			if(!"admin".equals(employee.getEmployeeNo())){
 				paramsCondition.put("operator", employee.getEmployeeId());
+			}
+			String param = StringUtil.trim(request.getParameter("param"));
+			if (StringUtil.isNotBlank(param)) {
+				paramsCondition.put("param", param);
+			}else{
+				paramsCondition.put("param", Constants.BIRTHDAY_PARAM);
 			}
 			paramsCondition.put("pageNo", Integer.valueOf(request.getParameter("pageNumber")));
 			paramsCondition.put("pageSize", Integer.valueOf(request.getParameter("pageSize")));

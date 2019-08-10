@@ -455,35 +455,90 @@
   
   <!-- 查询生日提醒列表 -->
   <select id="findBirthdayAllRetMapByPage" parameterType="hashmap" resultType="hashmap">
-	SELECT
-		member_id,
-		member_name,
-		member_phone,
-		DATE_FORMAT(member_birthday,'%Y-%m-%d'),
-		DATEDIFF(member_birthday,now()) sub_day
-	FROM
-		t_member
-	WHERE
-	DATEDIFF(member_birthday,now()) <![CDATA[<=]]> 5
-	AND DATEDIFF(member_birthday,now()) >0
-	<if test="operator != null">
-  		and operator =#{operator}
-  	</if>
-  	and member_status = '0'
-	order by  sub_day asc 
+		SELECT
+			*
+		FROM
+		(
+			SELECT
+			member_name,
+			member_phone,
+			member_birthday,
+			IF (cur >= today, cur, next) next_birthday,
+	    datediff(
+	        IF (cur >= today, cur, next),<!--今年的生日是否已过  --> 
+	        today
+	        ) sub_day
+	    FROM
+	        (
+	            SELECT
+						member_birthday,
+						member_name,
+						member_phone,
+	                today,
+	                date_add(member_birthday, INTERVAL diff YEAR) cur,<!-- 今年生日日期 -->
+	                date_add(member_birthday,INTERVAL diff + 1 YEAR) next<!--  第二年生日日期 -->
+	                FROM
+	                (
+	                    SELECT
+	                        member_name,
+							member_phone,
+	                        member_birthday,
+	                        (YEAR (now()) - YEAR (e.member_birthday)) diff,<!-- 年龄（周岁） --> 
+	                        str_to_date(date_format(now(), '%Y-%m-%d'),'%Y-%m-%d') AS today<!-- 今日 -->
+	                    FROM
+	                        t_member e
+	                    where e.member_status = '0'
+	                  	<if test="operator != null">
+						  		and e.operator =#{operator}
+						</if>
+	                ) AS a
+	        ) AS b
+	) c where c.sub_day <![CDATA[<=]]>#{day}
+	order by c.sub_day asc 
 	limit #{startIndex},#{pageSize}
   </select>
   
    <!-- 查询总条数 -->
   <select id="findBirthdayAllByPageCount" parameterType="hashmap" resultType="long">
- 	 SELECT count(*) FROM t_member 
- 	 WHERE
-		DATEDIFF(member_birthday,now()) <![CDATA[<=]]> 5
-		AND DATEDIFF(member_birthday,now()) >0
-		<if test="operator != null">
-	  		and operator =#{operator}
-	  	</if>
-  		and member_status = '0'
- 	 <include refid="whereClause" />
+ 	SELECT
+		count(*)
+		FROM
+		(
+			SELECT
+			member_name,
+			member_phone,
+			member_birthday,
+			IF (cur >= today, cur, next) next_birthday,
+	    datediff(
+	        IF (cur >= today, cur, next),<!--今年的生日是否已过  --> 
+	        today
+	        ) sub_day
+	    FROM
+	        (
+	            SELECT
+						member_birthday,
+						member_name,
+						member_phone,
+	                today,
+	                date_add(member_birthday, INTERVAL diff YEAR) cur,<!-- 今年生日日期 -->
+	                date_add(member_birthday,INTERVAL diff + 1 YEAR) next<!--  第二年生日日期 -->
+	                FROM
+	                (
+	                    SELECT
+	                        member_name,
+							member_phone,
+	                        member_birthday,
+	                        (YEAR (now()) - YEAR (e.member_birthday)) diff,<!-- 年龄（周岁） --> 
+	                        str_to_date(date_format(now(), '%Y-%m-%d'),'%Y-%m-%d') AS today<!-- 今日 -->
+	                    FROM
+	                        t_member e
+	                    where e.member_status = '0'
+	                  	<if test="operator != null">
+						  		and e.operator =#{operator}
+						</if>
+	                ) AS a
+	        ) AS b
+	) c where c.sub_day <![CDATA[<=]]>#{day}
+	order by c.sub_day asc 
   </select>
 </mapper>
