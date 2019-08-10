@@ -6,9 +6,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.resale.background.base.controller.BaseController;
 import com.resale.background.pojo.Employee;
 import com.resale.background.pojo.Menu;
 import com.resale.background.service.MenuService;
@@ -24,30 +23,29 @@ import com.resale.background.util.DataMsg;
 import com.resale.background.util.TreeView;
 import com.resale.util.StringUtil;
 
-	
 /**
-*<dl>
-*<dt>类名：MenuController.java</dt>
-*<dd>描述: 菜单管理业务逻辑实现</dd>
-*<dd>创建时间： 2018年10月23日 上午10:58:11</dd>
-*<dd>创建人：tie</dd>
-*<dt>版本历史: </dt>
-* <pre>
+ * <dl>
+ * <dt>类名：MenuController.java</dt>
+ * <dd>描述: 菜单管理业务逻辑实现</dd>
+ * <dd>创建时间： 2018年10月23日 上午10:58:11</dd>
+ * <dd>创建人：tie</dd>
+ * <dt>版本历史:</dt>
+ * 
+ * <pre>
 * Date Author Version Description
 * ------------------------------------------------------------------
 * 2018年10月23日 上午10:58:11 tie 1.0 1.0 Version
-* </pre>
-*</dl>
-*/
+ * </pre>
+ * </dl>
+ */
 @Controller
 @RequestMapping("/menu")
-public class MenuController {
+public class MenuController extends BaseController {
 
 	@Autowired
 	private MenuService menuService;
-	
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	/**
 	 * 跳转到菜单列表页面
@@ -60,8 +58,6 @@ public class MenuController {
 		return "system/menu/menuList";
 	}
 
-	
-
 	/**
 	 * 查询所有菜单
 	 * 
@@ -73,7 +69,7 @@ public class MenuController {
 	@RequestMapping("/getMenuList")
 	public List<Map<String, Object>> getMenuList(DataMsg dataMsg) {
 		try {
-			return  menuService.getMenuList();
+			return menuService.getMenuList();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -107,8 +103,7 @@ public class MenuController {
 	@RequestMapping("/saveMenu")
 	public boolean saveMenu(Menu menu) {
 		try {
-			Subject subject = SecurityUtils.getSubject();
-			Employee employee = (Employee) subject.getPrincipal();
+			Employee employee = getCurrentEmployee();
 			int employeeId = employee.getEmployeeId();
 			menuService.saveMenu(menu, employeeId);
 			return true;
@@ -181,8 +176,7 @@ public class MenuController {
 	@RequestMapping("/updateMenu")
 	public String updateMenu(Menu menu) {
 		try {
-			Subject subject = SecurityUtils.getSubject();
-			Employee employee = (Employee) subject.getPrincipal();
+			Employee employee = getCurrentEmployee();
 			int employeeId = employee.getEmployeeId();
 			menuService.updateMenu(menu, employeeId);
 			return "1";
@@ -204,8 +198,7 @@ public class MenuController {
 	@RequestMapping("/deleteMenu")
 	public boolean deleteMenu(Menu menu) {
 		try {
-			Subject subject = SecurityUtils.getSubject();
-			Employee employee = (Employee) subject.getPrincipal();
+			Employee employee = getCurrentEmployee();
 			int employeeId = employee.getEmployeeId();
 			menuService.deleteMenu(menu, employeeId);
 			return true;
@@ -215,13 +208,15 @@ public class MenuController {
 		}
 
 	}
+
 	/**
 	 * 查询所有的菜单
+	 * 
 	 * @return map
 	 */
 	@ResponseBody
 	@RequestMapping("/getMenuDataList")
-	public List<Map<String,Object>> getMenuDataList(){
+	public List<Map<String, Object>> getMenuDataList() {
 		try {
 			return menuService.getMenuDataList();
 		} catch (Exception e) {
@@ -229,17 +224,18 @@ public class MenuController {
 			return null;
 		}
 	}
+
 	/**
 	 * 加载菜单
+	 * 
 	 * @param rid
 	 * @return
 	 */
 	@ResponseBody
 	@RequestMapping("/getMenuTree")
-	public List<TreeView> getMenuTree(){
+	public List<TreeView> getMenuTree() {
 		try {
-			Subject subject = SecurityUtils.getSubject();
-			Employee employee = (Employee) subject.getPrincipal();
+			Employee employee = getCurrentEmployee();
 			int employeeId = employee.getEmployeeId();
 			return menuService.getViewTree(employeeId);
 		} catch (Exception e) {
@@ -247,17 +243,18 @@ public class MenuController {
 			return null;
 		}
 	}
+
 	/**
 	 * 菜单管理
+	 * 
 	 * @param rid
 	 * @return
 	 */
 	@ResponseBody
 	@RequestMapping("/getManageMenuTree")
-	public List<TreeView> getManageMenuTree(){
+	public List<TreeView> getManageMenuTree() {
 		try {
-			Subject subject = SecurityUtils.getSubject();
-			Employee employee = (Employee) subject.getPrincipal();
+			Employee employee = getCurrentEmployee();
 			int employeeId = employee.getEmployeeId();
 			return menuService.getManageMenuTree(employeeId);
 		} catch (Exception e) {

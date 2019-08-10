@@ -19,13 +19,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.resale.background.base.controller.BaseController;
 import com.resale.background.pojo.Employee;
 import com.resale.background.pojo.Role;
 import com.resale.background.service.EmployeeService;
 import com.resale.background.util.DataMsg;
 import com.resale.background.util.PageModel;
-import com.resale.background.util.ReturnMsgData;
 import com.resale.util.StringUtil;
 import com.resale.util.UUIDUtil;
 
@@ -73,7 +73,7 @@ public class EmployeeController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping("/getEmployeeList")
-	public ReturnMsgData getEmployeeList(HttpServletRequest request, DataMsg dataMsg) {
+	public DataMsg getEmployeeList(HttpServletRequest request, DataMsg dataMsg) {
 		try {
 			Map<String, Object> paramsCondition = new HashMap<String, Object>();
 			Employee employee = getCurrentEmployee();
@@ -92,11 +92,10 @@ public class EmployeeController extends BaseController {
 			PageModel pageModel = employeeService.getEmployeeList(paramsCondition);
 			dataMsg.setTotal(pageModel.getTotalRecords());
 			dataMsg.setRows(pageModel.getList());
-			new ReturnMsgData("success", "0", dataMsg);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return new ReturnMsgData("error", "1", dataMsg);
+		return dataMsg;
 	}
 
 	/**

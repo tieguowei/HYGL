@@ -4,7 +4,7 @@
 <%@ include file="/include/index_core.jsp" %>
 <html>
 <head>
-    <title>流程管理系统</title>
+    <title>会员管理系统</title>
 </head>
 <style>
  table td{
@@ -43,7 +43,7 @@
 #treeview .node-selected,
 #treeview .search-result  {     
 	color: #fff!important;
-    background-color: #FFCC00!important;
+    background-color: #3872FF!important;
 }
 /*输入框*/
 .form-control, 
@@ -96,7 +96,7 @@
 .treeview span.icon{width:12px;margin-right:5px}
 .treeview .node-disabled{color:#fff;cursor:not-allowed}
 .node-treeview{color:#fff;}
-.node-treeview:not(.node-disabled):hover{background-color:#FFCC00;}
+.node-treeview:not(.node-disabled):hover{background-color:#3872FF;}
 .treeview ul .list-group-item { border: none;}
 .pagination {margin:0px;}
 /* nav-tabs-top */
@@ -176,9 +176,9 @@ nextBtn.click(function(){
 
 <body class="fixed-sidebar full-height-layout gray-bg">
 <div>
-    <nav class=" navbar-static-side" role="navigation" style="background: 003300; top: 0; ">
+    <nav class=" navbar-static-side" role="navigation" style="background:#324B7A; top: 0; ">
         <div class=""style="overflow-x: hidden;height: 100%; position:relative;">
-             <div class="sysTitle" >流程监控系统</div>
+             <div class="sysTitle" >会员管理系统</div>
               <!--展示左侧菜单 -->
              <div id="treeview" class=""></div>
              <input style="display: none" type="text" class="form-control" id="input-expand-node" placeholder="Identify node..." value=""/>              
@@ -187,7 +187,7 @@ nextBtn.click(function(){
     </nav>
     <div id="page-wrapper" class="gray-bg" style="height: 100%; position: relative;">
         <div class="row border-bottom topNavbarWrap">
-            <nav class="navbar navbar-static-top  " role="navigation" style="margin-bottom: 0;background-color: #FFCC00;">
+            <nav class="navbar navbar-static-top  " role="navigation" style="margin-bottom: 0;background-color:#3872FF;">
                 <ul class="nav metismenu pull-right" id="side-menu" >
                 	<li class="nav-header" style="text-align: center;padding: 0;background:none;">
                 		<div class="dropdown profile-element" style="width: 100px;margin-top: 10px; font-size: 14px;">
@@ -223,7 +223,7 @@ nextBtn.click(function(){
 
 		<div id="myTabContent" class="tab-content">
 				<div class="tab-pane fade in active" id="home">
-					<h2 style="text-align: center; margin-top: 180px;">欢迎使用流程管理系统</h2>
+					<h2 style="text-align: center; margin-top: 180px;">欢迎使用会员管理系统</h2>
 				</div>
 		</div>
     </div>

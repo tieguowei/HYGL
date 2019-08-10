@@ -9,6 +9,8 @@ public class Member {
     private String memberNo;
 
     private String memberName;
+    
+    private String memberSex;
 
     private String memberPhone;
 
@@ -68,7 +70,15 @@ public class Member {
         return memberBirthday;
     }
 
-    public void setMemberBirthday(Date memberBirthday) {
+    public String getMemberSex() {
+		return memberSex;
+	}
+
+	public void setMemberSex(String memberSex) {
+		this.memberSex = memberSex;
+	}
+
+	public void setMemberBirthday(Date memberBirthday) {
         this.memberBirthday = memberBirthday;
     }
 
