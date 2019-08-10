@@ -27,8 +27,6 @@ public class MemberServiceImpl implements MemberService {
 	private MemberBillMapper memberBillMapper;
 	@Autowired
 	private MemberScoreMapper memberScoreMapper;
-	@Autowired
-	private SystemDictMapper systemDictMapper;
 	@Override
 	public PageModel getMemberList(Map<String, Object> paramsCondition) {
 		PageModel pageModel = new PageModel();
@@ -104,21 +102,95 @@ public class MemberServiceImpl implements MemberService {
 		MemberBill bill  = buildBill(member,"1");
 		//记录消费流水
 		memberBillMapper.insertSelective(bill);
-		//新增积分
-		MemberScore record = buildScore(member,"0");
+		//新增积分流水
+		MemberScore record = buildScore(member,"0",member.getTotalMoney().intValue());
 		memberScoreMapper.insertSelective(record);
 		return "1";
 	}
 
-	private MemberScore buildScore(Member member,String type) {
+	private MemberScore buildScore(Member member,String type,int jf) {
 		MemberScore score = new MemberScore();
 		score.setMemberId(member.getMemberId());
 		score.setOperator(member.getOperator());
 		score.setScoreType(type);
 		score.setCreateTime(new Date());
-		score.setScore(member.getTotalMoney().intValue());
+		score.setScore(jf);
 		score.setScoreRemark(member.getRemark());
 		return score;
+	}
+
+	@Override
+	@Transactional
+	public String deduct(Member member) {
+		//校验密码
+		Member oldMember =  memberMapper.checkPwd(member);
+		if(null == oldMember){
+			return "2";
+		}
+		//积分不足
+		int  AggregateScore = member.getAggregateScore();
+		int residueScore  = oldMember.getResidueScore();
+		if(AggregateScore > residueScore){
+			return "3";
+		}
+		//修改可用积分
+		memberMapper.updateResidueScore(member);
+		//新增扣减积分流水
+		MemberScore record = buildScore(member,"1",AggregateScore);
+		memberScoreMapper.insertSelective(record);
+		return "1";
+	}
+
+	@Override
+	public PageModel getMemberBillList(Map<String, Object> paramsCondition) {
+		PageModel pageModel = new PageModel();
+		pageModel.setPageNo((Integer)paramsCondition.get("pageNo"));
+		pageModel.setPageSize((Integer)paramsCondition.get("pageSize"));
+		paramsCondition.put("startIndex", pageModel.getStartIndex());
+		paramsCondition.put("endIndex", pageModel.getEndIndex());
+		List<Map<String, Object>> data = memberBillMapper.findAllRetMapByPage(paramsCondition);
+		Long totalRecords = memberBillMapper.findAllByPageCount(paramsCondition);
+		pageModel.setList(data);
+		pageModel.setTotalRecords(totalRecords);
+		return pageModel;
+	}
+
+	@Override
+	public void updateMemberBill(List<Map<String, String>> data) {
+		memberBillMapper.updateMemberBill(data);
+	}
+
+	@Override
+	public void updateMemberScore(List<Map<String, String>> data) {
+		memberScoreMapper.updateMemberScore(data);
+	}
+
+	@Override
+	public PageModel getMemberScoreList(Map<String, Object> paramsCondition) {
+		PageModel pageModel = new PageModel();
+		pageModel.setPageNo((Integer)paramsCondition.get("pageNo"));
+		pageModel.setPageSize((Integer)paramsCondition.get("pageSize"));
+		paramsCondition.put("startIndex", pageModel.getStartIndex());
+		paramsCondition.put("endIndex", pageModel.getEndIndex());
+		List<Map<String, Object>> data = memberScoreMapper.findAllRetMapByPage(paramsCondition);
+		Long totalRecords = memberScoreMapper.findAllByPageCount(paramsCondition);
+		pageModel.setList(data);
+		pageModel.setTotalRecords(totalRecords);
+		return pageModel;
+	}
+
+	@Override
+	public PageModel getBirthdayList(Map<String, Object> paramsCondition) {
+		PageModel pageModel = new PageModel();
+		pageModel.setPageNo((Integer)paramsCondition.get("pageNo"));
+		pageModel.setPageSize((Integer)paramsCondition.get("pageSize"));
+		paramsCondition.put("startIndex", pageModel.getStartIndex());
+		paramsCondition.put("endIndex", pageModel.getEndIndex());
+		List<Map<String, Object>> data = memberMapper.findBirthdayAllRetMapByPage(paramsCondition);
+		Long totalRecords = memberMapper.findBirthdayAllByPageCount(paramsCondition);
+		pageModel.setList(data);
+		pageModel.setTotalRecords(totalRecords);
+		return pageModel;
 	}
 
 }

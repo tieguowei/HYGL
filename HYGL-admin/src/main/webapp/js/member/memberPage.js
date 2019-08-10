@@ -332,10 +332,16 @@ var Member = function (){
             $("#memberAddDlg").modal('hide');//新增dlg
             $("#rechargeDlg").modal('hide');//充值dlg
             $("#consumeDlg").modal('hide');//消费dlg
-            $("#rechargeDlg").modal('hide');//扣分dlg
+            $("#deductDlg").modal('hide');//扣分dlg
+            
+            $("#billListDlg").modal('hide');//账单列表dlg
+            $("#scoreListDlg").modal('hide');//积分列表dlg
             $("input[type=reset]").trigger("click");
             $('#addMemberForm').data('bootstrapValidator', null);
             $('#memberUpdateForm').data('bootstrapValidator', null);
+            $('#rechargeForm').data('bootstrapValidator', null);
+            $('#consumeForm').data('bootstrapValidator', null);
+            $('#deductForm').data('bootstrapValidator', null);
             Member.formValidator();
         },
         //充值，打开模态框
@@ -394,6 +400,18 @@ var Member = function (){
         		$("#consume_residue_money").val(member.residue_money);
         	}
         },
+        //页面校验余额是否足够
+        checkResidueMoney:function(){
+        	var write_money = $("#write_money").val();
+        	var residue_money = $("#consume_residue_money").val();
+        	if(write_money >residue_money ){
+        		 $.alert({
+                     title: '提示信息！',
+                     content: '余额不足！',
+                     type: 'red'
+                 });
+        	}
+        },
         //消费
         consume:function(){
            if($("#consumeForm").data('bootstrapValidator').validate().isValid()){
@@ -427,6 +445,76 @@ var Member = function (){
                         	 $.alert({
                                  title: '提示信息！',
                                  content: '消费失败！',
+                                 type: 'red'
+                             });
+                        }
+                    },
+                    error:function(){
+                        $.alert({
+                            title: '提示信息！',
+                            content: '请求失败！',
+                            type: 'red'
+                        });
+                    }
+                });
+            }
+        },
+        //扣减积分 打开模态框
+        openDeduct:function(){
+        	if (this.checkSingleData()) {
+        		$("#deductDlg").modal('show');
+        		var member = Member.seItem;
+        		$("#deduct_member_id").val(member.member_id);
+        		$("#deduct_member_name").val(member.member_name);
+        		$("#deduct_member_phone").val(member.member_phone);
+        		$("#deduct_residue_score").val(member.residue_score);
+        	}
+        },
+        //页面校验余额是否足够
+        checkResidueScore:function(){
+        	var write_score = $("#write_score").val();
+        	var residue_score = $("#deduct_residue_score").val();
+        	if(write_score > residue_score ){
+        		 $.alert({
+                     title: '提示信息！',
+                     content: '可用积分不足！',
+                     type: 'red'
+                 });
+        	}
+        },
+        //消费
+        deduct:function(){
+           if($("#deductForm").data('bootstrapValidator').validate().isValid()){
+              $.ajax({
+                    url:'member/deduct',
+                    type:'post',
+                    dataType:'json',
+                    data:$("#deductForm").serialize(),
+                    success:function(data){
+                        if(data == '1'){
+                            $.alert({
+                                title: '提示信息！',
+                                content: '扣减成功!',
+                                type: 'blue'
+                            });
+                            Member.closeDlg();
+                            $("#member-table").bootstrapTable('refresh');
+                        }else if(data == '2'){
+                            $.alert({
+                                title: '提示信息！',
+                                content: '密码错误！',
+                                type: 'red'
+                            });
+                        }else if(data == '3'){
+                            $.alert({
+                                title: '提示信息！',
+                                content: '积分不足！',
+                                type: 'red'
+                            });
+                        }else{
+                        	 $.alert({
+                                 title: '提示信息！',
+                                 content: '扣减失败！',
                                  type: 'red'
                              });
                         }
@@ -511,6 +599,25 @@ var Member = function (){
                     }
                 }
             });
+            $("#deductForm").bootstrapValidator({
+                fields:{
+                	aggregateScore:{
+                        validators:{
+                            notEmpty:{
+                                message:"扣减积分不能为空"
+                            }
+                        }
+                    },
+                    memberPwd:{
+                        validators:{
+                            notEmpty:{
+                                message:"消费密码不能为空"
+                            }
+                        }
+                    }
+                }
+            });
+            
         },
         //搜索
         searchMember:function () {
@@ -525,9 +632,246 @@ var Member = function (){
     }
 }();
 function operateBasicFormatter(value, row, index) {
+	var memberId = row.member_id;
 	return [
-	    	'<input style="background:#23c6c8;  height: 30px;width: 60px;color: white; line-height:20px" type="button"  value="账单" />',
-	    	'<input style="background:#23c6c8;  height: 30px;width: 70px;color: white; line-height:20px" type="button"  value="积分详情" />'
-
+	    	'<input style="background:#23c6c8;  height: 30px;width: 60px;color: white; line-height:20px" type="button"  value="账单" onclick="openBill('+memberId+')" />',
+	    	'<input style="background:#23c6c8;  height: 30px;width: 70px;color: white; line-height:20px" type="button"  value="积分详情" onclick="openScoreDetail('+memberId+')"/>'
         ].join('');
 };
+
+
+function openBill(memberId){
+	$("#hidden_member_id").val(memberId);
+ 	$('#member-bill-table').bootstrapTable({
+        url: "member/getMemberBillList",
+        method:"post",
+        dataType: "json",
+        contentType: "application/x-www-form-urlencoded",
+        striped:true,//隔行变色
+        cache:false,  //是否使用缓存
+        showColumns:false,// 列
+        pagination: true, //分页
+        sortable: false, //是否启用排序
+        singleSelect: false,
+        search:false, //显示搜索框
+        buttonsAlign: "right", //按钮对齐方式
+        showRefresh:false,//是否显示刷新按钮
+        sidePagination: "server", //服务端处理分页
+        pageSize : 5, //默认每页条数
+        pageNumber : 1, //默认分页
+        pageList : [5, 10, 20, 50 ],//分页数
+        toolbar:"#memberBillButton",
+        showColumns : false, //显示隐藏列
+        uniqueId: "bill_id", //每一行的唯一标识，一般为主键列
+        queryParamsType:'',
+        queryParams: queryMemberBillParams,//传递参数（*）
+        columns : [
+            {
+			title: '序列',
+			width : '50',
+			align : "center",
+			valign : "middle",
+            switchable:false,
+            formatter:function(value,row,index){
+                var pageSize=$('#member-bill-table').bootstrapTable('getOptions').pageSize;//通过表的#id 可以得到每页多少条
+                var pageNumber=$('#member-bill-table').bootstrapTable('getOptions').pageNumber;//通过表的#id 可以得到当前第几页
+                return pageSize * (pageNumber - 1) + index + 1;    //返回每条的序号： 每页条数 * （当前页 - 1 ）+ 序号
+            }
+         },{
+            field : "create_time",
+            title : "日期",
+            align : "center",
+            valign : "middle"
+        },{
+            field : "bill_money",
+            title : "金额",
+            align : "center",
+            valign : "middle",
+            formatter: function (value, row, index) {
+                var retStr = "";
+                retStr= '<input id="'+index+'bill_money" style="width:80px;" type="number" step="1" min="0" value="'+row.bill_money+'"/>';
+                return retStr;
+            }
+        },{
+            field : "bill_type",
+            title : "类型",
+            align : "center",
+            valign : "middle",
+            sortable : "true"
+        },{
+            field : "bill_remark",
+            title : "备注",
+            align : "center",
+            valign : "middle",
+            sortable : "true"
+        }]
+    });
+	$("#billListDlg").modal('show');
+};
+function queryMemberBillParams(params){
+	 var temp = {
+             pageSize: params.pageSize,  //页面大小
+             pageNumber: params.pageNumber, //页码
+             memberId: $("#hidden_member_id").val(),
+         };
+         return temp;
+};
+function updateMemberBill(){
+	 var rows  = $('#member-bill-table').bootstrapTable('getData');
+	 for(var index=0;index <rows.length;index++){
+		 var row = rows[index];
+		 var billMoney = $("#"+index+"bill_money").val();
+		 row["bill_money"]= billMoney;
+    }
+	$('#member-bill-table').bootstrapTable('updateRow', {rows: rows})
+	$.ajax({
+	    type: "POST",
+	    url: "member/updateMemberBill",
+	    dataType: "json",
+	    traditional: true,
+	    data:{
+	        rows: JSON.stringify(rows),
+	    },
+	    success: function (data) {
+	    	 if(data){
+	    		 $.alert({
+                     title: '提示信息！',
+                     content: '修改成功！',
+                     type: 'blue'
+                 });
+	    	     $("#member-bill-table").bootstrapTable('refresh');
+		        }else{
+		        	$.alert({
+	                     title: '提示信息！',
+	                     content: '修改失败！',
+	                     type: 'red'
+	                 });
+		        }
+	    },
+	    error:function(){
+            $.alert({
+                title: '提示信息！',
+                content: '请求失败！',
+                type: 'red'
+            });
+        }
+	});
+
+}
+function openScoreDetail(memberId){
+	$("#hidden_member_id").val(memberId);
+ 	$('#member-score-table').bootstrapTable({
+        url: "member/getMemberScoreList",
+        method:"post",
+        dataType: "json",
+        contentType: "application/x-www-form-urlencoded",
+        striped:true,//隔行变色
+        cache:false,  //是否使用缓存
+        showColumns:false,// 列
+        pagination: true, //分页
+        sortable: false, //是否启用排序
+        singleSelect: false,
+        search:false, //显示搜索框
+        buttonsAlign: "right", //按钮对齐方式
+        showRefresh:false,//是否显示刷新按钮
+        sidePagination: "server", //服务端处理分页
+        pageSize : 5, //默认每页条数
+        pageNumber : 1, //默认分页
+        pageList : [5, 10, 20, 50 ],//分页数
+        toolbar:"#memberScoreButton",
+        showColumns : false, //显示隐藏列
+        uniqueId: "bill_id", //每一行的唯一标识，一般为主键列
+        queryParamsType:'',
+        queryParams: queryMemberBillParams,//传递参数（*）
+        columns : [
+            {
+			title: '序列',
+			width : '50',
+			align : "center",
+			valign : "middle",
+            switchable:false,
+            formatter:function(value,row,index){
+                var pageSize=$('#member-score-table').bootstrapTable('getOptions').pageSize;//通过表的#id 可以得到每页多少条
+                var pageNumber=$('#member-score-table').bootstrapTable('getOptions').pageNumber;//通过表的#id 可以得到当前第几页
+                return pageSize * (pageNumber - 1) + index + 1;    //返回每条的序号： 每页条数 * （当前页 - 1 ）+ 序号
+            }
+         },{
+            field : "create_time",
+            title : "日期",
+            align : "center",
+            valign : "middle"
+        },{
+            field : "score",
+            title : "积分",
+            align : "center",
+            valign : "middle",
+            formatter: function (value, row, index) {
+                var retStr = "";
+                retStr= '<input id="'+index+'score" style="width:80px;" type="number" step="1" min="0" value="'+row.score+'"/>';
+                return retStr;
+            }
+        },{
+            field : "score_type",
+            title : "类型",
+            align : "center",
+            valign : "middle",
+            sortable : "true"
+        },{
+            field : "score_remark",
+            title : "备注",
+            align : "center",
+            valign : "middle",
+            sortable : "true"
+        }]
+    });
+	$("#scoreListDlg").modal('show');
+};
+function queryMemberBillParams(params){
+	 var temp = {
+             pageSize: params.pageSize,  //页面大小
+             pageNumber: params.pageNumber, //页码
+             memberId: $("#hidden_member_id").val(),
+         };
+         return temp;
+};
+function updateMemberScore(){
+	 var rows  = $('#member-score-table').bootstrapTable('getData');
+	 for(var index=0;index <rows.length;index++){
+		 var row = rows[index];
+		 var billMoney = $("#"+index+"score").val();
+		 row["score"]= billMoney;
+    }
+	$('#member-score-table').bootstrapTable('updateRow', {rows: rows})
+	$.ajax({
+	    type: "POST",
+	    url: "member/updateMemberScore",
+	    dataType: "json",
+	    traditional: true,
+	    data:{
+	        rows: JSON.stringify(rows),
+	    },
+	    success: function (data) {
+	    	 if(data){
+	    		 $.alert({
+                     title: '提示信息！',
+                     content: '修改成功！',
+                     type: 'blue'
+                 });
+	    	     $("#member-score-table").bootstrapTable('refresh');
+		        }else{
+		        	$.alert({
+	                     title: '提示信息！',
+	                     content: '修改失败！',
+	                     type: 'red'
+	                 });
+		        }
+	    },
+	    error:function(){
+            $.alert({
+                title: '提示信息！',
+                content: '请求失败！',
+                type: 'red'
+            });
+        }
+	});
+}

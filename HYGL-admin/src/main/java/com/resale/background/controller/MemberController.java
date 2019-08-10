@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSONArray;
 import com.resale.background.base.controller.BaseController;
 import com.resale.background.pojo.Employee;
 import com.resale.background.pojo.Member;
@@ -198,7 +200,7 @@ public class MemberController extends BaseController {
 
 
 	/**
-	 * 充值
+	 * 消费
 	 */
 	@RequestMapping("/consume")
 	@ResponseBody
@@ -213,11 +215,141 @@ public class MemberController extends BaseController {
 			return "";
 		}
 	};
+
+	/**
+	 * 扣减积分
+	 */
+	@RequestMapping("/deduct")
+	@ResponseBody
+	public String deduct(Member member) {
+		try {
+			Employee employee = getCurrentEmployee();
+			member.setOperator(employee.getEmployeeId());
+			String result = memberService.deduct(member);
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	};
+	
 	public String getRandom(){
 		Random random = new Random();
 		DecimalFormat df = new DecimalFormat("00");
 		String no = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + df.format(random.nextInt(20));
 		return no;
 	}
+	
+	/**
+	 *查询账单列表
+	 */
+	@ResponseBody
+	@RequestMapping("/getMemberBillList")
+	public DataMsg getMemberBillList(HttpServletRequest request, DataMsg dataMsg) {
+		try {
+			Map<String, Object> paramsCondition = new HashMap<String, Object>();
+			String memberId = StringUtil.trim(request.getParameter("memberId"));
+			if (StringUtil.isNotBlank(memberId)) {
+				paramsCondition.put("memberId", memberId);
+			}
+			paramsCondition.put("pageNo", Integer.valueOf(request.getParameter("pageNumber")));
+			paramsCondition.put("pageSize", Integer.valueOf(request.getParameter("pageSize")));
+			PageModel pageModel = memberService.getMemberBillList(paramsCondition);
+			dataMsg.setTotal(pageModel.getTotalRecords());
+			dataMsg.setRows(pageModel.getList());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dataMsg;
+	}
+	/**
+	 * 修改账单流水
+	 */
+	@ResponseBody
+	@RequestMapping("/updateMemberBill")
+	public boolean updateMemberBill(String rows){
+		try {
+			List<Map<String,String>> data = (List<Map<String,String>>) JSONArray.parse(rows);
+			memberService.updateMemberBill(data);
+			return true;
+		} catch (Exception e) {
+			e.getMessage();
+			return false;
+		}
+        
+	}
+	/**
+	 * 修改积分流水
+	 */
+	@ResponseBody
+	@RequestMapping("/updateMemberScore")
+	public boolean updateMemberScore(String rows){
+		try {
+			List<Map<String,String>> data = (List<Map<String,String>>) JSONArray.parse(rows);
+			memberService.updateMemberScore(data);
+			return true;
+		} catch (Exception e) {
+			e.getMessage();
+			return false;
+		}
+	}
+	
+	/**
+	 *查询积分列表
+	 */
+	@ResponseBody
+	@RequestMapping("/getMemberScoreList")
+	public DataMsg getMemberScoreList(HttpServletRequest request, DataMsg dataMsg) {
+		try {
+			Map<String, Object> paramsCondition = new HashMap<String, Object>();
+			String memberId = StringUtil.trim(request.getParameter("memberId"));
+			if (StringUtil.isNotBlank(memberId)) {
+				paramsCondition.put("memberId", memberId);
+			}
+			paramsCondition.put("pageNo", Integer.valueOf(request.getParameter("pageNumber")));
+			paramsCondition.put("pageSize", Integer.valueOf(request.getParameter("pageSize")));
+			PageModel pageModel = memberService.getMemberScoreList(paramsCondition);
+			dataMsg.setTotal(pageModel.getTotalRecords());
+			dataMsg.setRows(pageModel.getList());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dataMsg;
+	}
+	
 
+	/**
+	 * 跳转到身体提醒列表页面
+	 * 
+	 * @return
+	 */
+	@RequestMapping("/goBirthdayPage")
+	public String goBirthdayPage() {
+		return "member/birthdayList";
+	}
+
+	/**
+	 *查询生日提醒列表
+	 */
+	@ResponseBody
+	@RequestMapping("/getBirthdayList")
+	public DataMsg getBirthdayList(HttpServletRequest request, DataMsg dataMsg) {
+		try {
+			Map<String, Object> paramsCondition = new HashMap<String, Object>();
+			Employee employee = getCurrentEmployee();
+			if(!"admin".equals(employee.getEmployeeNo())){
+				paramsCondition.put("operator", employee.getEmployeeId());
+			}
+			paramsCondition.put("pageNo", Integer.valueOf(request.getParameter("pageNumber")));
+			paramsCondition.put("pageSize", Integer.valueOf(request.getParameter("pageSize")));
+			PageModel pageModel = memberService.getBirthdayList(paramsCondition);
+			dataMsg.setTotal(pageModel.getTotalRecords());
+			dataMsg.setRows(pageModel.getList());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dataMsg;
+	}
+	
+	
 }

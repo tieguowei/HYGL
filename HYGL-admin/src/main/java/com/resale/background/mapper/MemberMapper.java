@@ -41,4 +41,10 @@ public interface MemberMapper {
 	void updateTotalMoney(Member member);
 
 	void updateResidueMoney(Member member);
+
+	void updateResidueScore(Member member);
+
+	List<Map<String, Object>> findBirthdayAllRetMapByPage(Map<String, Object> paramsCondition);
+
+	Long findBirthdayAllByPageCount(Map<String, Object> paramsCondition);
 }

@@ -3,6 +3,8 @@ package com.resale.background.mapper;
 import com.resale.background.pojo.MemberBill;
 import com.resale.background.pojo.MemberBillExample;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface MemberBillMapper {
@@ -27,4 +29,10 @@ public interface MemberBillMapper {
     int updateByPrimaryKeySelective(MemberBill record);
 
     int updateByPrimaryKey(MemberBill record);
+
+	List<Map<String, Object>> findAllRetMapByPage(Map<String, Object> paramsCondition);
+
+	Long findAllByPageCount(Map<String, Object> paramsCondition);
+
+	void updateMemberBill(List<Map<String, String>> data);
 }

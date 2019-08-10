@@ -421,10 +421,12 @@
 	WHERE
 	member_id = #{memberId}
   </update>
+  
   <!-- 检查密码是否正确 -->
   <select id="checkPwd" parameterType="com.resale.background.pojo.Member"  resultMap="BaseResultMap">
-   	select residue_money from t_member where  member_id = #{memberId} and member_pwd = #{memberPwd}
+   	select residue_money,residue_score from t_member where  member_id = #{memberId} and member_pwd = #{memberPwd}
   </select>
+  
   <!-- 充值 - 修改总金额和可用余额 -->
   <update id="updateTotalMoney" parameterType="com.resale.background.pojo.Member">
  	update  t_member SET
@@ -438,6 +440,50 @@
   <update id="updateResidueMoney" parameterType="com.resale.background.pojo.Member">
  	update  t_member SET residue_money = residue_money 
  	- #{totalMoney},
+ 	aggregate_score = aggregate_score+ #{totalMoney},
+ 	residue_score = residue_score + #{totalMoney},
  	update_time = now(),operator = #{operator} where  member_id = #{memberId}
   </update>
+  
+  <!-- 修改可用积分 -->
+   <update id="updateResidueScore" parameterType="com.resale.background.pojo.Member">
+ 	update  t_member SET residue_score = residue_score 
+ 	- #{aggregateScore},
+ 	update_time = now(),operator = #{operator} where  member_id = #{memberId}
+  </update>
+  
+  
+  <!-- 查询生日提醒列表 -->
+  <select id="findBirthdayAllRetMapByPage" parameterType="hashmap" resultType="hashmap">
+	SELECT
+		member_id,
+		member_name,
+		member_phone,
+		DATE_FORMAT(member_birthday,'%Y-%m-%d'),
+		DATEDIFF(member_birthday,now()) sub_day
+	FROM
+		t_member
+	WHERE
+	DATEDIFF(member_birthday,now()) <![CDATA[<=]]> 5
+	AND DATEDIFF(member_birthday,now()) >0
+	<if test="operator != null">
+  		and operator =#{operator}
+  	</if>
+  	and member_status = '0'
+	order by  sub_day asc 
+	limit #{startIndex},#{pageSize}
+  </select>
+  
+   <!-- 查询总条数 -->
+  <select id="findBirthdayAllByPageCount" parameterType="hashmap" resultType="long">
+ 	 SELECT count(*) FROM t_member 
+ 	 WHERE
+		DATEDIFF(member_birthday,now()) <![CDATA[<=]]> 5
+		AND DATEDIFF(member_birthday,now()) >0
+		<if test="operator != null">
+	  		and operator =#{operator}
+	  	</if>
+  		and member_status = '0'
+ 	 <include refid="whereClause" />
+  </select>
 </mapper>

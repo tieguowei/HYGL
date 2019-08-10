@@ -274,7 +274,7 @@
 					<div class="form-group">
 						<label class="col-md-4 control-label">消费金额：</label>
 						<div class="col-md-6 ">
-							<input type="number"  name="totalMoney" class="form-control form-control-static"  step="1" min="0" >
+							<input type="number"  id="write_money" name="totalMoney" onblur="Member.checkResidueMoney()" class="form-control form-control-static"  step="1" min="0" >
 						</div>
 					</div>
 					<div class="form-group">
@@ -299,6 +299,89 @@
         </div>
     </div>
 </div> 
+
+<!--扣减积分 -->
+<div id="deductDlg" class="modal fade" id="myModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" aria-hidden="true" style="width: 600px;">
+    <div class="modal-dialog" style="width: 100%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">账户消费</h4>
+            </div>
+            <div class="modal-body" style="height: 280px; overflow-y:scroll;">
+				<form class="form-horizontal bv-form" id="deductForm"  method="post" style="margin-top: 5px;">
+					<div class="form-group">
+							<label class="col-md-4 control-label">会员姓名：</label>
+							<div class="col-md-6 ">
+								<input type="hidden"  id="deduct_member_id" name="memberId" class="form-control form-control-static" readonly="readonly">
+								<input type="text"  id="deduct_member_name" name="memberName" class="form-control form-control-static" readonly="readonly">
+							</div>
+					</div>
+					<div class="form-group">
+						<label class="col-md-4 control-label">手机号：</label>
+						<div class="col-md-6 ">
+							<input type="text"  id="deduct_member_phone" name="memberPhone" class="form-control form-control-static" readonly="readonly">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-md-4 control-label">可用积分：</label>
+						<div class="col-md-6 ">
+							<input type="text"  id="deduct_residue_score"  class="form-control form-control-static" readonly="readonly">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-md-4 control-label">扣减积分：</label>
+						<div class="col-md-6 ">
+							<input type="number"  id="write_score" name="aggregateScore" onblur="Member.checkResidueScore()" class="form-control form-control-static"  step="1" min="0" >
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-md-4 control-label">消费密码：</label>
+						<div class="col-md-6 ">
+							<input type="text"  name="memberPwd"  class="form-control form-control-static">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-md-4 control-label">备注：</label>
+						<div class="col-md-6 ">
+						<textarea  name="remark" rows="2" cols="27"></textarea>
+						</div>
+					</div>
+	            </form>
+            </div>
+            <div class="modal-footer">
+            	<input type="reset" name="reset" style="display: none;" />
+                <button type="button" class="btn btn-default" onclick="Member.closeDlg()">关闭</button>
+                <button id="saveEmployeeButton"  type="button" onclick="Member.deduct()" class="btn btn-primary">提交</button>
+            </div>
+        </div>
+    </div>
+</div> 
+
+<!-- 账单列表 -->
+<div id="billListDlg"  class="modal fade" aria-hidden="true" style="height: 370px;background: #fff; ">
+		    <div>
+			    <table id="member-bill-table"  style="overflow: hidden;padding: 5px 15px 15px;" class="table table-hover table-striped table-condensed table-bordered"></table>
+			</div>
+			<div id="memberBillButton" class="btn-group">
+                <button type="button"  class="btn btn-primary" onclick="updateMemberBill()">修改</button>
+                <button type="button" onclick="Member.closeDlg()" class="btn btn-default" style="margin-left: 20px;">关闭</button>
+     		</div>
+	</div>
 </div>
+
+<!-- 积分列表 -->
+<div id="scoreListDlg"  class="modal fade" aria-hidden="true" style="height: 370px;background: #fff; ">
+		    <div>
+			    <table id="member-score-table"  style="overflow: hidden;padding: 5px 15px 15px;" class="table table-hover table-striped table-condensed table-bordered"></table>
+			</div>
+			<div id="memberScoreButton" class="btn-group">
+                <button type="button"  class="btn btn-primary" onclick="updateMemberScore()">修改</button>
+                <button type="button" onclick="Member.closeDlg()" class="btn btn-default" style="margin-left: 20px;">关闭</button>
+     		</div>
+	</div>
+</div>
+
+<input type="hidden" id="hidden_member_id">
 </body>
 </html>

@@ -3,6 +3,8 @@ package com.resale.background.mapper;
 import com.resale.background.pojo.MemberScore;
 import com.resale.background.pojo.MemberScoreExample;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface MemberScoreMapper {
@@ -27,4 +29,10 @@ public interface MemberScoreMapper {
     int updateByPrimaryKeySelective(MemberScore record);
 
     int updateByPrimaryKey(MemberScore record);
+
+	void updateMemberScore(List<Map<String, String>> data);
+
+	List<Map<String, Object>> findAllRetMapByPage(Map<String, Object> paramsCondition);
+
+	Long findAllByPageCount(Map<String, Object> paramsCondition);
 }

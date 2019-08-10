@@ -256,4 +256,36 @@
       operator = #{operator,jdbcType=INTEGER}
     where bill_id = #{billId,jdbcType=INTEGER}
   </update>
+  
+  <!-- 查询账单列表 -->
+  <select id="findAllRetMapByPage" parameterType="hashmap" resultType="hashmap">
+	SELECT
+		bill_id,
+		member_id,
+		case when bill_type = '0' then '充值'
+		when bill_type = '1' then '消费'
+		end as bill_type,
+		bill_money,
+		bill_remark,
+		DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') create_time
+	FROM
+	t_member_bill
+	WHERE
+	member_id =#{memberId}
+	order by create_time desc
+	limit #{startIndex},#{pageSize}
+  </select>
+  
+   <!-- 查询总条数 -->
+  <select id="findAllByPageCount" parameterType="hashmap" resultType="long">
+ 	 SELECT count(*) FROM t_member_bill WHERE member_id =#{memberId}
+  </select>
+  
+  <update id="updateMemberBill" parameterType="java.util.List">
+		<foreach collection="list" item="item" index="index" open="" close="" separator=";">
+				update t_member_bill
+				set bill_money=${item.bill_money}
+				where bill_id = ${item.bill_id}
+        </foreach>
+ </update>
 </mapper>

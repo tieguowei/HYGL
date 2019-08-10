@@ -255,4 +255,36 @@
       operator = #{operator,jdbcType=INTEGER}
     where score_id = #{scoreId,jdbcType=INTEGER}
   </update>
+  
+  <!--批量修改积分流水 -->
+   <update id="updateMemberScore" parameterType="java.util.List">
+		<foreach collection="list" item="item" index="index" open="" close="" separator=";">
+				update t_member_score
+				set score=${item.score}
+				where score_id = ${item.score_id}
+        </foreach>
+ </update>
+ 
+  <!-- 查询积分列表 -->
+  <select id="findAllRetMapByPage" parameterType="hashmap" resultType="hashmap">
+	SELECT
+		score_id,
+		member_id,
+		case when score_type = '0' then '增加'
+		when score_type = '1' then '扣减'
+		end as score_type,
+		score,
+		score_remark,
+		DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') create_time
+	FROM
+	t_member_score
+	where member_id =#{memberId}
+	order by create_time desc
+	limit #{startIndex},#{pageSize}
+  </select>
+  
+   <!-- 查询总条数 -->
+  <select id="findAllByPageCount" parameterType="hashmap" resultType="long">
+ 	 SELECT count(*) FROM t_member_score WHERE member_id =#{memberId}
+  </select>
 </mapper>
