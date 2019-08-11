@@ -232,6 +232,12 @@
 						</div>
 					</div>
 					<div class="form-group">
+						<label class="col-md-4 control-label">赠送金额：</label>
+						<div class="col-md-6 ">
+							<input type="number"  name="giveMoney" class="form-control form-control-static"  step="1" min="0" >
+						</div>
+					</div>
+					<div class="form-group">
 						<label class="col-md-4 control-label">备注：</label>
 						<div class="col-md-6 ">
 						<textarea  name="remark" rows="2" cols="27"></textarea>

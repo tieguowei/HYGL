@@ -718,6 +718,11 @@ function openBill(memberId){
                 return retStr;
             }
         },{
+            field : "give_money",
+            title : "赠送金额",
+            align : "center",
+            valign : "middle",
+        },{
             field : "bill_type",
             title : "类型",
             align : "center",

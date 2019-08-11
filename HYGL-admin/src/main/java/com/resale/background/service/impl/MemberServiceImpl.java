@@ -80,6 +80,7 @@ public class MemberServiceImpl implements MemberService {
 		bill.setCreateTime(new Date());
 		bill.setMemberId(member.getMemberId());	
 		bill.setOperator(member.getOperator());
+		bill.setGiveMoney(member.getGiveMoney());
 		return bill;
 	}
 

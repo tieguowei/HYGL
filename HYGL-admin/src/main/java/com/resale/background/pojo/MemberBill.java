@@ -17,6 +17,8 @@ public class MemberBill {
     private Date createTime;
 
     private Date updateTime;
+    
+    private BigDecimal giveMoney;
 
     private Integer operator;
 
@@ -48,7 +50,15 @@ public class MemberBill {
         return billMoney;
     }
 
-    public void setBillMoney(BigDecimal billMoney) {
+    public BigDecimal getGiveMoney() {
+		return giveMoney;
+	}
+
+	public void setGiveMoney(BigDecimal giveMoney) {
+		this.giveMoney = giveMoney;
+	}
+
+	public void setBillMoney(BigDecimal billMoney) {
         this.billMoney = billMoney;
     }
 

@@ -431,7 +431,7 @@
   <update id="updateTotalMoney" parameterType="com.resale.background.pojo.Member">
  	update  t_member SET
 	 	 total_money = total_money + #{totalMoney}, 
-	 	residue_money=residue_money+#{totalMoney},
+	 	residue_money=residue_money + #{totalMoney}+#{giveMoney},
 	 	update_time = now(),operator = #{operator} 
  	where  member_id = #{memberId}
   </update>

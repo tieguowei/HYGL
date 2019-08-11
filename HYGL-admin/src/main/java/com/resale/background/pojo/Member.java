@@ -35,6 +35,8 @@ public class Member {
     private String isResetPwd;
     //备注
     private String remark;
+    //赠送金额
+    private BigDecimal giveMoney;
     
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date createTime;
@@ -80,7 +82,15 @@ public class Member {
         return memberBirthday;
     }
 
-    public String getRemark() {
+    public BigDecimal getGiveMoney() {
+		return giveMoney;
+	}
+
+	public void setGiveMoney(BigDecimal giveMoney) {
+		this.giveMoney = giveMoney;
+	}
+
+	public String getRemark() {
 		return remark;
 	}
 
