@@ -1,3 +1,6 @@
+$(function(){
+	formValidator();
+});
 var demoIframe;
 var treeview;
 var mapObj = new Map()
@@ -191,7 +194,7 @@ function updatePwd(){
 		if($("#myform").data('bootstrapValidator').validate().isValid()){
 			//校验商户原始密码是否正确
 			$.ajax({
-				url:'/employee/checkOldPwd',
+				url:'employee/checkOldPwd',
 				dataType:'json',
 				type:'post',
 				data:{
@@ -201,7 +204,7 @@ function updatePwd(){
 				success:function(data){
 					if(data){
 						$.ajax({
-							url:'/employee/updatePwd',
+							url:'employee/updatePwd',
 							dataType:'json',
 							type:'post',
 							data:{
@@ -261,9 +264,7 @@ function updatePwd(){
 	}
 }
 
-$(function(){
-	formValidator();
-});
+
 function formValidator(){
 	$("#myform").bootstrapValidator({
 		fields:{
@@ -309,7 +310,9 @@ function formValidator(){
 		}
 	});
 }
-
+function jumpurl(){  
+	location.href="logout";
+}  
 /**
  * 添加悬浮效果
  * @param value

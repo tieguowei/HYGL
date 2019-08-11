@@ -65,7 +65,7 @@ var Member = function (){
                         sortable : "true"
                 },{
                     field : "member_name",
-                    title : "会员姓名",
+                    title : "姓名",
                     width:50,
                     align : "center",
                     valign : "middle",
@@ -79,7 +79,7 @@ var Member = function (){
                     sortable : "true"
                 }, {
                     field : "member_birthday",
-                    title : "会员生日",
+                    title : "生日",
                     width:50,
                     align : "center",
                     valign : "middle",
@@ -93,7 +93,7 @@ var Member = function (){
                     sortable : "true"
                 }, {
                     field : "residue_money",
-                    title : "可用余额",
+                    title : "余额",
                     width:50,
                     align : "center",
                     valign : "middle",
@@ -108,7 +108,7 @@ var Member = function (){
                 }, {
                     field : "residue_score",
                     title : "可用积分",
-                    width:50,
+                    width:60,
                     align : "center",
                     valign : "middle",
                     sortable : "true"
@@ -124,7 +124,7 @@ var Member = function (){
                     title : "操作人",
                     align : "center",
                     valign : "middle",
-                    width:50,
+                    width:40,
                     sortable : "true"
                 },{
                     field: 'operate',
@@ -209,6 +209,9 @@ var Member = function (){
                          $("#update_card_no").val(data.member.cardNo);
                          $("#update_entry_time").val(data.member.memberBirthday);
                          $("#update_total_money").val(data.member.totalMoney);
+                         $("#update_residue_money").val(data.member.residueMoney);
+
+                         
                          $("#update_aggregate_score").val(data.member.aggregateScore);
                          if(data.member.memberSex==0){
                          	  document.getElementById("update_member_sex0").checked = true;

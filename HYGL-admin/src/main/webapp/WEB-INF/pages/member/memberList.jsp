@@ -171,7 +171,12 @@
 							<input type="text"  id="update_total_money" name="totalMoney" class="form-control form-control-static">
 						</div>
 					</div>
-					
+					<div class="form-group">
+						<label class="col-md-4 control-label">余额：</label>
+						<div class="col-md-6 ">
+							<input type="text"  id="update_residue_money" name="residueMoney" class="form-control form-control-static">
+						</div>
+					</div>
 					<div class="form-group">
 						<label class="col-md-4 control-label">总积分：</label>
 						<div class="col-md-6 ">
