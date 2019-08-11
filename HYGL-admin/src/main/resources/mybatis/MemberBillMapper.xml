@@ -292,27 +292,31 @@
  <!-- 查询今日 充值或者消费金额 -->
  <select id="getTodayMoney" parameterType="hashmap" resultType="String">
 	 SELECT
-		IFNULL(sum(bill_money),'0') billMoney
+		IFNULL(sum(b.bill_money),'0') billMoney
 	FROM
-		t_member_bill
-	where bill_type =#{billType}
-	and DATE_FORMAT(create_time, '%Y-%m-%d') = DATE_FORMAT(now(), '%Y-%m-%d')
+		t_member_bill b
+	left join t_member m on b.member_id  = m.member_id
+	where b.bill_type =#{billType}
+	and DATE_FORMAT(b.create_time, '%Y-%m-%d') = DATE_FORMAT(now(), '%Y-%m-%d')
  	<if test="operator != null">
-		and operator =#{operator}
+		and b.operator =#{operator}
 	</if>
+	and m.member_status ='0' 
  </select>
  
  <!-- 查询当月充值或者消费金额 -->
  <select id="getMonthMoney" parameterType="hashmap" resultType="String">
 	 SELECT
-		IFNULL(sum(bill_money),'0') billMoney
+		IFNULL(sum(b.bill_money),'0') billMoney
 	FROM
-		t_member_bill
-	where bill_type =#{billType}
-	and DATE_FORMAT(create_time, '%Y-%m-%d') <![CDATA[>=]]>#{firstDay}
-	and	DATE_FORMAT(create_time, '%Y-%m-%d') <![CDATA[<=]]>#{lastDay}
+		t_member_bill b
+    left join t_member m on b.member_id  = m.member_id
+	where b.bill_type =#{billType}
+	and DATE_FORMAT(b.create_time, '%Y-%m-%d') <![CDATA[>=]]>#{firstDay}
+	and	DATE_FORMAT(b.create_time, '%Y-%m-%d') <![CDATA[<=]]>#{lastDay}
  	<if test="operator != null">
-		and operator =#{operator}
+		and b.operator =#{operator}
 	</if>
+	and m.member_status ='0'
  </select>
 </mapper>
