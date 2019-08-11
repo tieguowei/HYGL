@@ -16,13 +16,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONArray;
 import com.resale.background.base.controller.BaseController;
-import com.resale.background.constants.Constants;
 import com.resale.background.pojo.Employee;
 import com.resale.background.pojo.Member;
 import com.resale.background.service.MemberService;
@@ -61,7 +61,7 @@ public class MemberController extends BaseController {
 	 */
 	@RequiresPermissions("memberManager:list") // 权限管理;
 	@RequestMapping("/goMemberPage")
-	public String goMemberPage() {
+	public String goMemberPage(Model model) {
 		return "member/memberList";
 	}
 
@@ -78,7 +78,7 @@ public class MemberController extends BaseController {
 		try {
 			Map<String, Object> paramsCondition = new HashMap<String, Object>();
 			Employee employee = getCurrentEmployee();
-			if(!"admin".equals(employee.getEmployeeNo())){
+			if (!"admin".equals(employee.getEmployeeNo())) {
 				paramsCondition.put("operator", employee.getEmployeeId());
 			}
 			String memberName = StringUtil.trim(request.getParameter("memberName"));
@@ -102,6 +102,7 @@ public class MemberController extends BaseController {
 
 	/**
 	 * 添加会员
+	 * 
 	 * @return
 	 */
 	@RequestMapping("/saveMember")
@@ -112,7 +113,7 @@ public class MemberController extends BaseController {
 			if (StringUtil.isNotEmpty(entryDate)) {
 				member.setMemberBirthday(date.parse(entryDate));
 			}
-			Employee employee =getCurrentEmployee();
+			Employee employee = getCurrentEmployee();
 			member.setMemberNo(getRandom());
 			member.setOperator(employee.getEmployeeId());
 			member.setCreateTime(new Date());
@@ -149,14 +150,14 @@ public class MemberController extends BaseController {
 	@ResponseBody
 	public boolean updateMember(Member member, @RequestParam("entryDate") String entryDate) {
 		try {
-			if("1".equals(member.getIsResetPwd())){
+			if ("1".equals(member.getIsResetPwd())) {
 				member.setMemberPwd("000000");
 			}
 			DateFormat date = new SimpleDateFormat("yyyy-MM-dd");
 			if (StringUtil.isNotEmpty(entryDate)) {
 				member.setMemberBirthday(date.parse(entryDate));
 			}
-			Employee employee =getCurrentEmployee();
+			Employee employee = getCurrentEmployee();
 			member.setOperator(employee.getEmployeeId());
 			memberService.updateMember(member);
 			return true;
@@ -165,7 +166,7 @@ public class MemberController extends BaseController {
 			return false;
 		}
 	};
-	
+
 	/**
 	 * 删除会员
 	 */
@@ -181,7 +182,7 @@ public class MemberController extends BaseController {
 		}
 
 	};
-	
+
 	/**
 	 * 充值
 	 */
@@ -198,7 +199,6 @@ public class MemberController extends BaseController {
 			return false;
 		}
 	};
-
 
 	/**
 	 * 消费
@@ -233,16 +233,16 @@ public class MemberController extends BaseController {
 			return "";
 		}
 	};
-	
-	public String getRandom(){
+
+	public String getRandom() {
 		Random random = new Random();
 		DecimalFormat df = new DecimalFormat("00");
 		String no = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + df.format(random.nextInt(20));
 		return no;
 	}
-	
+
 	/**
-	 *查询账单列表
+	 * 查询账单列表
 	 */
 	@ResponseBody
 	@RequestMapping("/getMemberBillList")
@@ -263,30 +263,32 @@ public class MemberController extends BaseController {
 		}
 		return dataMsg;
 	}
+
 	/**
 	 * 修改账单流水
 	 */
 	@ResponseBody
 	@RequestMapping("/updateMemberBill")
-	public boolean updateMemberBill(String rows){
+	public boolean updateMemberBill(String rows) {
 		try {
-			List<Map<String,String>> data = (List<Map<String,String>>) JSONArray.parse(rows);
+			List<Map<String, String>> data = (List<Map<String, String>>) JSONArray.parse(rows);
 			memberService.updateMemberBill(data);
 			return true;
 		} catch (Exception e) {
 			e.getMessage();
 			return false;
 		}
-        
+
 	}
+
 	/**
 	 * 修改积分流水
 	 */
 	@ResponseBody
 	@RequestMapping("/updateMemberScore")
-	public boolean updateMemberScore(String rows){
+	public boolean updateMemberScore(String rows) {
 		try {
-			List<Map<String,String>> data = (List<Map<String,String>>) JSONArray.parse(rows);
+			List<Map<String, String>> data = (List<Map<String, String>>) JSONArray.parse(rows);
 			memberService.updateMemberScore(data);
 			return true;
 		} catch (Exception e) {
@@ -294,9 +296,9 @@ public class MemberController extends BaseController {
 			return false;
 		}
 	}
-	
+
 	/**
-	 *查询积分列表
+	 * 查询积分列表
 	 */
 	@ResponseBody
 	@RequestMapping("/getMemberScoreList")
@@ -317,10 +319,9 @@ public class MemberController extends BaseController {
 		}
 		return dataMsg;
 	}
-	
 
 	/**
-	 * 跳转到身体提醒列表页面
+	 * 跳转到生日提醒列表页面
 	 * 
 	 * @return
 	 */
@@ -330,7 +331,7 @@ public class MemberController extends BaseController {
 	}
 
 	/**
-	 *查询生日提醒列表
+	 * 查询生日提醒列表
 	 */
 	@ResponseBody
 	@RequestMapping("/getBirthdayList")
@@ -338,14 +339,12 @@ public class MemberController extends BaseController {
 		try {
 			Map<String, Object> paramsCondition = new HashMap<String, Object>();
 			Employee employee = getCurrentEmployee();
-			if(!"admin".equals(employee.getEmployeeNo())){
+			if (!"admin".equals(employee.getEmployeeNo())) {
 				paramsCondition.put("operator", employee.getEmployeeId());
 			}
 			String param = StringUtil.trim(request.getParameter("param"));
 			if (StringUtil.isNotBlank(param)) {
 				paramsCondition.put("param", param);
-			}else{
-				paramsCondition.put("param", Constants.BIRTHDAY_PARAM);
 			}
 			paramsCondition.put("pageNo", Integer.valueOf(request.getParameter("pageNumber")));
 			paramsCondition.put("pageSize", Integer.valueOf(request.getParameter("pageSize")));
@@ -357,6 +356,45 @@ public class MemberController extends BaseController {
 		}
 		return dataMsg;
 	}
-	
-	
+
+	/**
+	 * 汇总数据
+	 */
+	@RequestMapping("/getMemberSumData")
+	@ResponseBody
+	public Map<String, Object> getMemberSumData() {
+		try {
+			Map<String, Object> map = new HashMap<String, Object>();
+			/**
+			 * 统计汇总数据
+			 */
+			Employee employee = getCurrentEmployee();
+			Map<String, Object> paramsCondition = new HashMap<String, Object>();
+			if (!"admin".equals(employee.getEmployeeNo())) {
+				paramsCondition.put("operator", employee.getEmployeeId());
+			}
+			// 今日新增会员 本月新增会员
+			String today_num = memberService.getTodayNum(paramsCondition);
+			String month_num = memberService.getMonthNum(paramsCondition);
+			map.put("today_num", today_num);
+			map.put("month_num", month_num);
+			// 今日充值 本月充值
+			paramsCondition.put("billType", "0");// 充值
+			String today_money = memberService.getTodayMoney(paramsCondition);
+			String month_money = memberService.getMonthMoney(paramsCondition);
+			map.put("today_money", today_money);
+			map.put("month_money", month_money);
+			// 今日消费额 本月消费额
+			paramsCondition.put("billType", "1");// 消费
+			String today_xf = memberService.getTodayMoney(paramsCondition);
+			String month_xf = memberService.getMonthMoney(paramsCondition);
+			map.put("today_xf", today_xf);
+			map.put("month_xf", month_xf);
+			return map;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 }

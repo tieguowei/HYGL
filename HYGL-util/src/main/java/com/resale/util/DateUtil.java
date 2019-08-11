@@ -3,12 +3,10 @@ package com.resale.util;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DateUtil {
@@ -385,5 +383,21 @@ public class DateUtil {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	//当月的第一天和最后一天
+	public static Map<String, Object> getFirstAndLastDay() {
+		Map<String, Object> map = new HashMap<String, Object>();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar c = Calendar.getInstance();
+		c.add(Calendar.MONTH, 0);
+		c.set(Calendar.DAY_OF_MONTH, 1);// 设置为1号,当前日期既为本月第一天
+		String first = format.format(c.getTime());
+		Calendar ca = Calendar.getInstance();
+		ca.set(Calendar.DAY_OF_MONTH, ca.getActualMaximum(Calendar.DAY_OF_MONTH));
+		String last = format.format(ca.getTime());
+		map.put("fristDay", first);
+		map.put("lastDay", last);
+		return map;
 	}
 }

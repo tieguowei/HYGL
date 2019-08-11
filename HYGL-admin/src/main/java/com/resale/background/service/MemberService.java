@@ -85,5 +85,13 @@ public interface MemberService {
 	 * @return
 	 */
 	PageModel getBirthdayList(Map<String, Object> paramsCondition);
+
+	String getTodayNum(Map<String, Object> paramsCondition);
+
+	String getMonthNum(Map<String, Object> paramsCondition);
+
+	String getTodayMoney(Map<String, Object> paramsCondition);
+
+	String getMonthMoney(Map<String, Object> paramsCondition);
 	
 }

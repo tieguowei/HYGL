@@ -17,6 +17,7 @@ import com.resale.background.pojo.MemberBill;
 import com.resale.background.pojo.MemberScore;
 import com.resale.background.service.MemberService;
 import com.resale.background.util.PageModel;
+import com.resale.util.DateUtil;
 @Service
 public class MemberServiceImpl implements MemberService {
 
@@ -102,19 +103,19 @@ public class MemberServiceImpl implements MemberService {
 		//记录消费流水
 		memberBillMapper.insertSelective(bill);
 		//新增积分流水
-		MemberScore record = buildScore(member,"0",member.getTotalMoney().intValue());
+		MemberScore record = buildScore(member,"0",member.getTotalMoney().intValue(),"消费赠送积分");
 		memberScoreMapper.insertSelective(record);
 		return "1";
 	}
 
-	private MemberScore buildScore(Member member,String type,int jf) {
+	private MemberScore buildScore(Member member,String type,int jf,String remark) {
 		MemberScore score = new MemberScore();
 		score.setMemberId(member.getMemberId());
 		score.setOperator(member.getOperator());
 		score.setScoreType(type);
 		score.setCreateTime(new Date());
 		score.setScore(jf);
-		score.setScoreRemark(member.getRemark());
+		score.setScoreRemark(remark);
 		return score;
 	}
 
@@ -135,7 +136,7 @@ public class MemberServiceImpl implements MemberService {
 		//修改可用积分
 		memberMapper.updateResidueScore(member);
 		//新增扣减积分流水
-		MemberScore record = buildScore(member,"1",AggregateScore);
+		MemberScore record = buildScore(member,"1",AggregateScore,member.getRemark());
 		memberScoreMapper.insertSelective(record);
 		return "1";
 	}
@@ -191,5 +192,32 @@ public class MemberServiceImpl implements MemberService {
 		pageModel.setTotalRecords(totalRecords);
 		return pageModel;
 	}
+
+	@Override
+	public String getTodayNum(Map<String, Object> paramsCondition) {
+		return memberMapper.getTodayNum(paramsCondition);
+	}
+
+	@Override
+	public String getMonthNum(Map<String, Object> paramsCondition) {
+		Map<String, Object> data = DateUtil.getFirstAndLastDay();
+		paramsCondition.put("firstDay", data.get("fristDay"));
+		paramsCondition.put("lastDay", data.get("lastDay"));
+		return memberMapper.getMonthNum(paramsCondition);
+	}
+
+	@Override
+	public String getTodayMoney(Map<String, Object> paramsCondition) {
+		return memberBillMapper.getTodayMoney(paramsCondition);
+	}
+
+	@Override
+	public String getMonthMoney(Map<String, Object> paramsCondition) {
+		Map<String, Object> data = DateUtil.getFirstAndLastDay();
+		paramsCondition.put("firstDay", data.get("fristDay"));
+		paramsCondition.put("lastDay", data.get("lastDay"));
+		return memberBillMapper.getMonthMoney(paramsCondition);
+	}
+
 
 }

@@ -47,4 +47,8 @@ public interface MemberMapper {
 	List<Map<String, Object>> findBirthdayAllRetMapByPage(Map<String, Object> paramsCondition);
 
 	Long findBirthdayAllByPageCount(Map<String, Object> paramsCondition);
+
+	String getTodayNum(Map<String, Object> paramsCondition);
+
+	String getMonthNum(Map<String, Object> paramsCondition);
 }

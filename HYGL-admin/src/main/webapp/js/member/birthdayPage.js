@@ -1,8 +1,6 @@
-
 /**
- * 会员管理
+ * 生日提醒
  */
-
 var MemberBirthday = {
     seItem: null		//选中的条目
 };
@@ -33,10 +31,10 @@ var MemberBirthday = function (){
                 pageSize : 5, //默认每页条数
                 pageNumber : 1, //默认分页
                 pageList : [ 5, 10, 20, 50],//分页数
-                toolbar:"#memberToolbar",
                 showColumns : false, //显示隐藏列
                 uniqueId: "member_id", //每一行的唯一标识，一般为主键列
                 queryParamsType:'',
+                queryParams: MemberBirthday.queryBirthParams,//传递参数（*）
                 clickToSelect: true,
                 columns : [{
     					title: '序号',//标题  可不加
@@ -65,7 +63,14 @@ var MemberBirthday = function (){
                     sortable : "true"
                 },{
                     field : "member_birthday",
-                    title : "会员生日",
+                    title : "会员出生日期",
+                    width:50,
+                    align : "center",
+                    valign : "middle",
+                    sortable : "true"
+                }, {
+                    field : "next_birthday",
+                    title : "下次生日时间",
                     width:50,
                     align : "center",
                     valign : "middle",
@@ -85,10 +90,14 @@ var MemberBirthday = function (){
             var temp = {
                 pageSize: params.pageSize,  //页面大小
                 pageNumber: params.pageNumber, //页码
-                memberPhone: $("#search_member_phone").val(),
-                memberName:$("#search_member_name").val(),
+                param: $("#set_day_param").val(),
             };
             return temp;
         },
+        //设置生日提醒天数
+        setDayParam:function(){
+            $("#member-birthday-table").bootstrapTable('refresh');
+
+        }
     }
-}
+}();

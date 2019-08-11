@@ -17,16 +17,14 @@
 <div class="panel panel-default">
 	<div class="panel-body">
 		<form id="memberSearchForm" class=" form-inline" style="margin-bottom: 0;">
+		  <span style="font-size: 16px;">生日提醒天数：</span>
 		  <div class="form-group">
 		    <div class="col-md-2 ">
-		   		 <input type="text" value="5" class="form-control" id="set_day_param" name="param" placeholder="设置生日提醒天数">
+		   		 <input type="text" value="5" class="form-control" id="set_day_param" name="param">
 		    </div>
 		  </div>
   		<button type="button" onclick="MemberBirthday.setDayParam()" class="btn btn-info ">
    			<span class="glyphicon glyphicon-search" aria-hidden="true" >确定</span>
-   		</button>
-   		<button type="button" onclick="MemberBirthday.empty()" class="btn btn-danger ">
-   			<span class="glyphicon glyphicon-remove" aria-hidden="true" > 清空</span>
    		</button>
 </form>
 	</div>

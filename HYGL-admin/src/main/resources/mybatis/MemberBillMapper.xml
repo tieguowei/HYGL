@@ -288,4 +288,31 @@
 				where bill_id = ${item.bill_id}
         </foreach>
  </update>
+ 
+ <!-- 查询今日 充值或者消费金额 -->
+ <select id="getTodayMoney" parameterType="hashmap" resultType="String">
+	 SELECT
+		IFNULL(sum(bill_money),'0') billMoney
+	FROM
+		t_member_bill
+	where bill_type =#{billType}
+	and DATE_FORMAT(create_time, '%Y-%m-%d') = DATE_FORMAT(now(), '%Y-%m-%d')
+ 	<if test="operator != null">
+		and operator =#{operator}
+	</if>
+ </select>
+ 
+ <!-- 查询当月充值或者消费金额 -->
+ <select id="getMonthMoney" parameterType="hashmap" resultType="String">
+	 SELECT
+		IFNULL(sum(bill_money),'0') billMoney
+	FROM
+		t_member_bill
+	where bill_type =#{billType}
+	and DATE_FORMAT(create_time, '%Y-%m-%d') <![CDATA[>=]]>#{firstDay}
+	and	DATE_FORMAT(create_time, '%Y-%m-%d') <![CDATA[<=]]>#{lastDay}
+ 	<if test="operator != null">
+		and operator =#{operator}
+	</if>
+ </select>
 </mapper>

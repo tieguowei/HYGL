@@ -493,7 +493,7 @@
 						</if>
 	                ) AS a
 	        ) AS b
-	) c where c.sub_day <![CDATA[<=]]>#{day}
+	) c where c.sub_day <![CDATA[<=]]>#{param}
 	order by c.sub_day asc 
 	limit #{startIndex},#{pageSize}
   </select>
@@ -538,7 +538,39 @@
 						</if>
 	                ) AS a
 	        ) AS b
-	) c where c.sub_day <![CDATA[<=]]>#{day}
+	) c where c.sub_day <![CDATA[<=]]>#{param}
 	order by c.sub_day asc 
+  </select>
+  
+  <!-- 当日新增会员 -->
+  <select id="getTodayNum" parameterType="hashmap" resultType="String" >
+	SELECT
+		IFNULL(count(*),'0') today_num
+		FROM
+		t_member
+		WHERE
+		DATE_FORMAT(create_time, '%Y-%m-%d') = DATE_FORMAT(now(), '%Y-%m-%d')
+	and member_status = '0'
+	<if test="operator != null">
+		and operator =#{operator}
+	</if>
+  </select>
+ 
+  <!-- 当月新增会员 -->
+  <select id="getMonthNum" parameterType="hashmap" resultType="String" >
+	SELECT
+		IFNULL(count(*),'0') month_num
+		FROM
+		t_member
+		WHERE
+		DATE_FORMAT(create_time, '%Y-%m-%d') <![CDATA[>=]]>
+		#{firstDay}
+		and
+		DATE_FORMAT(create_time, '%Y-%m-%d') <![CDATA[<=]]>
+		#{lastDay}
+	and member_status = '0'
+	<if test="operator != null">
+		and operator =#{operator}
+	</if>
   </select>
 </mapper>

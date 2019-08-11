@@ -40,11 +40,13 @@
 
 <div class="panel panel-default">
 	<div class="panel-body" style="height: 50px;">
-		今日开卡数：<span style="color:red;margin-left: 10px;margin-right: 10px;"> 10</span> 
-		今日充值金额：<span style="color:red;margin-left: 10px;margin-right: 10px;"> 1000元</span> 
-		今日消费金额：<span style="color:red;margin-left: 10px;margin-right: 10px;"> 300元 </span> 
-		本月充值金额：<span style="color:red;margin-left: 10px;margin-right: 10px;"> 5000元  </span> 
-		本月消费金额：<span style="color:red;margin-left: 10px;margin-right: 10px;"> 2000元</span> 
+		今日新增会员：<span style="color:red;margin-left: 10px;margin-right: 10px;"><span id="today_num">${today_num}</span> &nbsp;人</span>
+		今日充值金额：<span style="color:red;margin-left: 10px;margin-right: 10px;"> <span id="today_money">${today_money}</span>&nbsp;元</span> 
+		今日消费金额：<span style="color:red;margin-left: 10px;margin-right: 20px;"> <span id="today_xf">${today_xf}</span>&nbsp;元 </span> 
+		
+		本月新增会员： <span style="color:red;margin-left: 10px;margin-right: 10px;"> <span id="month_num">${month_num}</span>&nbsp;人</span>
+		本月充值金额：<span style="color:red;margin-left: 10px;margin-right: 10px;"><span id="month_money">${month_money}</span>&nbsp;元  </span> 
+		本月消费金额：<span style="color:red;margin-left: 10px;margin-right: 10px;"><span id="month_xf"> ${month_xf}</span>&nbsp;元</span> 
 	</div>
 </div>
 <!--toolbar  -->
@@ -56,16 +58,16 @@
   				 <span class="glyphicon glyphicon-pencil" >修改会员</span>
   		</button>
   		<button class=" btn btn-danger" type="button" onclick="Member.deleteMember()">
-  			<span class="glyphicon glyphicon-remove" >删除会员</span>
+  			<span class="glyphicon glyphicon-trash" >删除会员</span>
   		</button>
   		<button type="button" class=" btn btn-info" onclick="Member.openRecharge()">
-  				 <span class="glyphicon glyphicon-pencil" >充值</span>
+  				 <span class="glyphicon glyphicon-plus" >充值</span>
   		</button>
   		<button type="button" class=" btn btn-info" onclick="Member.openConsume()">
-  				 <span class="glyphicon glyphicon-pencil" >消费</span>
+  				 <span class="glyphicon glyphicon-minus" >消费</span>
   		</button>
   		<button type="button" class=" btn btn-info" onclick="Member.openDeduct()">
-  				 <span class="glyphicon glyphicon-pencil" >扣减积分</span>
+  				 <span class="glyphicon glyphicon-minus" >扣减积分</span>
   		</button>
 </div>
 <!--列表 -->

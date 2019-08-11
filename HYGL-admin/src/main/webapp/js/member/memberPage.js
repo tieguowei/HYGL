@@ -132,7 +132,29 @@ var Member = function (){
                     width: '80px',
                     formatter: operateBasicFormatter
                 },],
-               
+                onLoadSuccess: function(data){  
+                	
+                	 $.ajax({
+                         url:'member/getMemberSumData',
+                         dataType:'json',
+                         type:'post',
+                         success:function(map){
+                             $("#today_num").html(map.today_num);
+                             $("#today_money").html(map.today_money);
+                             $("#month_money").html(map.month_money);
+                             $("#month_num").html(map.month_num);
+                             $("#today_xf").html(map.today_xf);
+                             $("#month_xf").html(map.month_xf);
+                         },
+                         error:function(){
+                             $.alert({
+                                 title: '提示信息！',
+                                 content: '请求失败！',
+                                 type: 'red'
+                             });
+                         }
+                     });
+                },
             });
         },
         queryParams:function(params){
@@ -333,16 +355,15 @@ var Member = function (){
             $("#rechargeDlg").modal('hide');//充值dlg
             $("#consumeDlg").modal('hide');//消费dlg
             $("#deductDlg").modal('hide');//扣分dlg
-            
             $("#billListDlg").modal('hide');//账单列表dlg
             $("#scoreListDlg").modal('hide');//积分列表dlg
             $("input[type=reset]").trigger("click");
-            $('#addMemberForm').data('bootstrapValidator', null);
-            $('#memberUpdateForm').data('bootstrapValidator', null);
-            $('#rechargeForm').data('bootstrapValidator', null);
-            $('#consumeForm').data('bootstrapValidator', null);
-            $('#deductForm').data('bootstrapValidator', null);
-            Member.formValidator();
+            $(':input','#memberUpdateForm').not(':button,:submit,:reset').val('').removeAttr('checked').removeAttr('checked');
+            $(':input','#addMemberForm').not(':button,:submit,:reset').val('').removeAttr('checked').removeAttr('checked');
+            $(':input','#rechargeForm').not(':button,:submit,:reset').val('').removeAttr('checked').removeAttr('checked');
+            $(':input','#consumeForm').not(':button,:submit,:reset').val('').removeAttr('checked').removeAttr('checked');
+            $(':input','#deductForm').not(':button,:submit,:reset').val('').removeAttr('checked').removeAttr('checked');
+            $("#member-table").bootstrapTable('refresh');
         },
         //充值，打开模态框
         openRecharge:function(){
@@ -369,8 +390,8 @@ var Member = function (){
                                 content: '充值成功!',
                                 type: 'blue'
                             });
-                            Member.closeDlg();
                             $("#member-table").bootstrapTable('refresh');
+                            Member.closeDlg();
                         }else{
                         	 $.alert({
                                  title: '提示信息！',
@@ -404,7 +425,7 @@ var Member = function (){
         checkResidueMoney:function(){
         	var write_money = $("#write_money").val();
         	var residue_money = $("#consume_residue_money").val();
-        	if(write_money >residue_money ){
+        	if(parseInt(write_money) > parseInt(residue_money)){
         		 $.alert({
                      title: '提示信息！',
                      content: '余额不足！',
@@ -427,8 +448,8 @@ var Member = function (){
                                 content: '消费成功!',
                                 type: 'blue'
                             });
-                            Member.closeDlg();
                             $("#member-table").bootstrapTable('refresh');
+                            Member.closeDlg();
                         }else if(data == '2'){
                             $.alert({
                                 title: '提示信息！',
@@ -470,11 +491,11 @@ var Member = function (){
         		$("#deduct_residue_score").val(member.residue_score);
         	}
         },
-        //页面校验余额是否足够
+        //页面校验积分是否足够
         checkResidueScore:function(){
         	var write_score = $("#write_score").val();
         	var residue_score = $("#deduct_residue_score").val();
-        	if(write_score > residue_score ){
+        	if(parseInt(write_score) > parseInt(residue_score) ){
         		 $.alert({
                      title: '提示信息！',
                      content: '可用积分不足！',
@@ -482,10 +503,10 @@ var Member = function (){
                  });
         	}
         },
-        //消费
+        //扣减积分
         deduct:function(){
            if($("#deductForm").data('bootstrapValidator').validate().isValid()){
-              $.ajax({
+        	   $.ajax({
                     url:'member/deduct',
                     type:'post',
                     dataType:'json',
@@ -497,8 +518,8 @@ var Member = function (){
                                 content: '扣减成功!',
                                 type: 'blue'
                             });
-                            Member.closeDlg();
                             $("#member-table").bootstrapTable('refresh');
+                            Member.closeDlg();
                         }else if(data == '2'){
                             $.alert({
                                 title: '提示信息！',
@@ -642,6 +663,7 @@ function operateBasicFormatter(value, row, index) {
 
 function openBill(memberId){
 	$("#hidden_member_id").val(memberId);
+	$('#member-bill-table').bootstrapTable('destroy');
  	$('#member-bill-table').bootstrapTable({
         url: "member/getMemberBillList",
         method:"post",
@@ -760,6 +782,7 @@ function updateMemberBill(){
 }
 function openScoreDetail(memberId){
 	$("#hidden_member_id").val(memberId);
+	$('#member-score-table').bootstrapTable('destroy');
  	$('#member-score-table').bootstrapTable({
         url: "member/getMemberScoreList",
         method:"post",

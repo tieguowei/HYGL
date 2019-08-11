@@ -35,4 +35,8 @@ public interface MemberBillMapper {
 	Long findAllByPageCount(Map<String, Object> paramsCondition);
 
 	void updateMemberBill(List<Map<String, String>> data);
+
+	String getTodayMoney(Map<String, Object> paramsCondition);
+
+	String getMonthMoney(Map<String, Object> paramsCondition);
 }
