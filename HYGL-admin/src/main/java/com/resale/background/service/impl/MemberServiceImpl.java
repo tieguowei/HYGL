@@ -123,16 +123,12 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	@Transactional
 	public String deduct(Member member) {
-		//校验密码
-		Member oldMember =  memberMapper.checkPwd(member);
-		if(null == oldMember){
-			return "2";
-		}
 		//积分不足
+		Member oldMember =  memberMapper.selectByPrimaryKey(member.getMemberId());
 		int  AggregateScore = member.getAggregateScore();
 		int residueScore  = oldMember.getResidueScore();
 		if(AggregateScore > residueScore){
-			return "3";
+			return "2";
 		}
 		//修改可用积分
 		memberMapper.updateResidueScore(member);

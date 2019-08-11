@@ -319,7 +319,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="myModalLabel">账户消费</h4>
+                <h4 class="modal-title" id="myModalLabel">扣减积分</h4>
             </div>
             <div class="modal-body" style="height: 280px; overflow-y:scroll;">
 				<form class="form-horizontal bv-form" id="deductForm"  method="post" style="margin-top: 5px;">
@@ -346,12 +346,6 @@
 						<label class="col-md-4 control-label">扣减积分：</label>
 						<div class="col-md-6 ">
 							<input type="number"  id="write_score" name="aggregateScore" onblur="Member.checkResidueScore()" class="form-control form-control-static"  step="1" min="0" >
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-md-4 control-label">消费密码：</label>
-						<div class="col-md-6 ">
-							<input type="text"  name="memberPwd"  class="form-control form-control-static">
 						</div>
 					</div>
 					<div class="form-group">

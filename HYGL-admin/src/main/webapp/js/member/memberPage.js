@@ -526,12 +526,6 @@ var Member = function (){
                         }else if(data == '2'){
                             $.alert({
                                 title: '提示信息！',
-                                content: '密码错误！',
-                                type: 'red'
-                            });
-                        }else if(data == '3'){
-                            $.alert({
-                                title: '提示信息！',
                                 content: '积分不足！',
                                 type: 'red'
                             });
@@ -629,13 +623,6 @@ var Member = function (){
                         validators:{
                             notEmpty:{
                                 message:"扣减积分不能为空"
-                            }
-                        }
-                    },
-                    memberPwd:{
-                        validators:{
-                            notEmpty:{
-                                message:"消费密码不能为空"
                             }
                         }
                     }
