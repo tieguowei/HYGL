@@ -184,6 +184,12 @@
 						</div>
 					</div>
 					<div class="form-group">
+						<label class="col-md-4 control-label">可用积分：</label>
+						<div class="col-md-6 ">
+							<input type="text"  id="update_residue_score" name="residueScore" class="form-control form-control-static">
+						</div>
+					</div>
+					<div class="form-group">
 						<label class="col-md-4 control-label">密码还原：</label>
 						<div class="col-md-6" class="form-control form-control-static">
 							<input   type="radio"  style="margin-left: 10px;"  name="isResetPwd" value="1">是

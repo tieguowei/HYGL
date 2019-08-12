@@ -201,6 +201,7 @@ var Member = function (){
                      	memberId:memberId
                      },
                      success:function(data){
+                    	 alert(data.member.residueScore)
                          $("#update_member_id").val(data.member.memberId);
                          $("#update_member_name").val(data.member.memberName);
                          $("#update_member_phone").val(data.member.memberPhone);
@@ -210,9 +211,8 @@ var Member = function (){
                          $("#update_entry_time").val(data.member.memberBirthday);
                          $("#update_total_money").val(data.member.totalMoney);
                          $("#update_residue_money").val(data.member.residueMoney);
-
-                         
                          $("#update_aggregate_score").val(data.member.aggregateScore);
+                         $("#update_residue_score").val(data.member.residueScore);
                          if(data.member.memberSex==0){
                          	  document.getElementById("update_member_sex0").checked = true;
                          	}
