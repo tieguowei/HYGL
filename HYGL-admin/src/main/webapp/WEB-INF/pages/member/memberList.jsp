@@ -184,6 +184,12 @@
 						</div>
 					</div>
 					<div class="form-group">
+						<label class="col-md-4 control-label">可用积分：</label>
+						<div class="col-md-6 ">
+							<input type="text"  id="update_residue_score" name="residueScore" class="form-control form-control-static">
+						</div>
+					</div>
+					<div class="form-group">
 						<label class="col-md-4 control-label">修改密码：</label>
 						<div class="col-md-6" class="form-control form-control-static">
 							<input type="text"  id="update_member_pwd" name="memberPwd" class="form-control form-control-static">

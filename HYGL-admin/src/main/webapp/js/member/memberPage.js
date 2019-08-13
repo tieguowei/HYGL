@@ -212,6 +212,7 @@ var Member = function (){
                          $("#update_residue_money").val(data.member.residueMoney);
                          $("#update_aggregate_score").val(data.member.aggregateScore);
                          $("#update_member_pwd").val(data.member.memberPwd);
+                         $("#update_residue_score").val(data.member.residueScore);
                          if(data.member.memberSex==0){
                          	  document.getElementById("update_member_sex0").checked = true;
                          	}
