@@ -210,9 +210,8 @@ var Member = function (){
                          $("#update_entry_time").val(data.member.memberBirthday);
                          $("#update_total_money").val(data.member.totalMoney);
                          $("#update_residue_money").val(data.member.residueMoney);
-
-                         
                          $("#update_aggregate_score").val(data.member.aggregateScore);
+                         $("#update_member_pwd").val(data.member.memberPwd);
                          if(data.member.memberSex==0){
                          	  document.getElementById("update_member_sex0").checked = true;
                          	}

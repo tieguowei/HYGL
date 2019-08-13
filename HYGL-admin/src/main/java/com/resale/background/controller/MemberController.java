@@ -150,9 +150,6 @@ public class MemberController extends BaseController {
 	@ResponseBody
 	public boolean updateMember(Member member, @RequestParam("entryDate") String entryDate) {
 		try {
-			if ("1".equals(member.getIsResetPwd())) {
-				member.setMemberPwd("000000");
-			}
 			DateFormat date = new SimpleDateFormat("yyyy-MM-dd");
 			if (StringUtil.isNotEmpty(entryDate)) {
 				member.setMemberBirthday(date.parse(entryDate));
