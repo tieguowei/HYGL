@@ -1,8 +1,6 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.9.6
- *
  * Copyright (c) 2015-2017 hhurz, https://github.com/hhurz
  *
  * Original Work Copyright (c) 2014 Giri Raj
@@ -77,7 +75,6 @@
         },
         onCellData:        null,
         onCellHtmlData:    null,
-        onIgnoreRow:       null,          // onIgnoreRow($tr, rowIndex): function should return true to not export a row
         onMsoNumberFormat: null,          // Excel 2000 html format only. See readme.md for more information about msonumberformat
         outputMode:        'file',        // 'file', 'string', 'base64' or 'window' (experimental)
         pdfmake: {
@@ -94,7 +91,7 @@
         tfootSelector:     'tr',          // set empty ('') to prevent export of tfoot rows
         theadSelector:     'tr',
         tableName:         'myTableName',
-        type:              'csv',         // 'csv', 'tsv', 'txt', 'sql', 'json', 'com.cjrj.edu.xml', 'excel', 'doc', 'png' or 'pdf'
+        type:              'csv',         // 'csv', 'tsv', 'txt', 'sql', 'json', 'xml', 'excel', 'doc', 'png' or 'pdf'
         worksheetName:     'Worksheet'
       };
 
@@ -108,8 +105,6 @@
       var trData         = '';
       var colNames       = [];
       var blob;
-      var $hiddenTableElements = [];
-      var checkCellVisibilty = false;     // used to speed up export of tables with extensive css styling
 
       $.extend(true, defaults, options);
 
@@ -338,7 +333,7 @@
       } else if ( defaults.type === 'xml' ) {
 
         rowIndex = 0;
-        var xml  = '<?com.cjrj.edu.xml version="1.0" encoding="utf-8"?>';
+        var xml  = '<?xml version="1.0" encoding="utf-8"?>';
         xml += '<tabledata><fields>';
 
         // Header
@@ -388,12 +383,12 @@
           return base64encode(xml);
 
         try {
-          blob = new Blob([xml], {type: "application/com.cjrj.edu.xml;charset=utf-8"});
+          blob = new Blob([xml], {type: "application/xml;charset=utf-8"});
           saveAs(blob, defaults.fileName + '.xml');
         }
         catch (e) {
           downloadFile(defaults.fileName + '.xml',
-            'data:application/com.cjrj.edu.xml;charset=utf-8;base64,',
+            'data:application/xml;charset=utf-8;base64,',
             xml);
         }
       }
@@ -401,14 +396,12 @@
         var docDatas = [];
 
         $(el).filter(function () {
-          return isVisible($(this));
+          return $(this).data("tableexport-display") != 'none' &&
+            ($(this).is(':visible') ||
+            $(this).data("tableexport-display") == 'always');
         }).each(function () {
           var $table  = $(this);
           var docData = '';
-
-          $hiddenTableElements = $table.find("tr, th, td").filter(":hidden");
-          checkCellVisibilty = $hiddenTableElements.length > 0;
-
           rowIndex    = 0;
           colNames    = GetColumnNames(this);
           $hrows      = $table.find('thead').first().find(defaults.theadSelector);
@@ -479,7 +472,7 @@
         });
 
         var CreationDate = new Date().toISOString();
-        var xmlssDocFile = '<?com.cjrj.edu.xml version="1.0" encoding="UTF-8"?><?mso-application progid="Excel.Sheet"?> ' +
+        var xmlssDocFile = '<?xml version="1.0" encoding="UTF-8"?><?mso-application progid="Excel.Sheet"?> ' +
                             '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" ' +
                                       'xmlns:o="urn:schemas-microsoft-com:office:office" ' +
                                       'xmlns:x="urn:schemas-microsoft-com:office:excel" ' +
@@ -537,12 +530,12 @@
           return base64encode(xmlssDocFile);
 
         try {
-          blob = new Blob([xmlssDocFile], {type: "application/com.cjrj.edu.xml;charset=utf-8"});
+          blob = new Blob([xmlssDocFile], {type: "application/xml;charset=utf-8"});
           saveAs(blob, defaults.fileName + '.xml');
         }
         catch (e) {
           downloadFile(defaults.fileName + '.xml',
-            'data:application/com.cjrj.edu.xml;charset=utf-8;base64,',
+            'data:application/xml;charset=utf-8;base64,',
             xmlssDocFile);
         }
       }
@@ -554,13 +547,11 @@
         var docData     = '';
 
         $(el).filter(function () {
-          return isVisible($(this));
+          return $(this).data("tableexport-display") != 'none' &&
+            ($(this).is(':visible') ||
+            $(this).data("tableexport-display") == 'always');
         }).each(function () {
           var $table = $(this);
-
-          $hiddenTableElements = $table.find("tr, th, td").filter(":hidden");
-          checkCellVisibilty = $hiddenTableElements.length > 0;
-
           rowIndex   = 0;
           colNames   = GetColumnNames(this);
 
@@ -611,7 +602,6 @@
             ForEachVisibleCell(this, 'td,th', rowIndex, $hrows.length + $rows.length,
               function (cell, row, col) {
                 if ( cell !== null ) {
-                  var tdvalue = parseString(cell, row, col);
                   var tdstyle = '';
                   var tdcss   = $(cell).data("tableexport-msonumberformat");
 
@@ -640,11 +630,7 @@
                     trData += ' colspan="' + $(cell).attr('colspan') + '"';
                   if ( $(cell).is("[rowspan]") )
                     trData += ' rowspan="' + $(cell).attr('rowspan') + '"';
-
-                  if ( typeof tdvalue === 'string' && tdvalue != '' )
-                    tdvalue = tdvalue.replace(/\n/g, '<br>');
-
-                  trData += '>' + tdvalue + '</td>';
+                  trData += '>' + parseString(cell, row, col).replace(/\n/g, '<br>') + '</td>';
                 }
               });
             if ( trData.length > 0 )
@@ -667,7 +653,7 @@
         docFile += "<head>";
         if ( MSDocType === 'excel' ) {
           docFile += "<!--[if gte mso 9]>";
-          docFile += "<com.cjrj.edu.xml>";
+          docFile += "<xml>";
           docFile += "<x:ExcelWorkbook>";
           docFile += "<x:ExcelWorksheets>";
           docFile += "<x:ExcelWorksheet>";
@@ -680,7 +666,7 @@
           docFile += "</x:ExcelWorksheet>";
           docFile += "</x:ExcelWorksheets>";
           docFile += "</x:ExcelWorkbook>";
-          docFile += "</com.cjrj.edu.xml>";
+          docFile += "</xml>";
           docFile += "<![endif]-->";
         }
         docFile += "<style>br {mso-data-placement:same-cell;}</style>";
@@ -971,8 +957,8 @@
             var rk = '', ro = '';
             var mw = 0;
 
-            $(el).each(function () {
-              if ( isVisible($(this)) ) {
+            $(el).filter(':visible').each(function () {
+              if ( $(this).css('display') != 'none' ) {
                 var w = getPropertyUnitValue($(this).get(0), 'width', 'pt');
 
                 if ( w > mw ) {
@@ -1014,12 +1000,11 @@
 
           if ( typeof teOptions.images != 'undefined' ) {
             $(el).filter(function () {
-              return isVisible($(this));
+              return $(this).data("tableexport-display") != 'none' &&
+                ($(this).is(':visible') ||
+                $(this).data("tableexport-display") == 'always');
             }).each(function () {
               var rowCount = 0;
-
-              $hiddenTableElements = $(this).find("tr, th, td").filter(":hidden");
-              checkCellVisibilty = $hiddenTableElements.length > 0;
 
               $hrows = $(this).find('thead').find(defaults.theadSelector);
               $(this).find('tbody').each(function () {
@@ -1047,13 +1032,12 @@
 
           loadImages(teOptions, function () {
             $(el).filter(function () {
-              return isVisible($(this));
+              return $(this).data("tableexport-display") != 'none' &&
+                ($(this).is(':visible') ||
+                $(this).data("tableexport-display") == 'always');
             }).each(function () {
               var colKey;
               var rowIndex = 0;
-
-              $hiddenTableElements = $(this).find("tr, th, td").filter(":hidden");
-              checkCellVisibilty = $hiddenTableElements.length > 0;
 
               colNames = GetColumnNames(this);
 
@@ -1330,138 +1314,94 @@
         return result;
       }
 
-      function isVisible ($element) {
-        var isCell = typeof $element[0].cellIndex !== 'undefined';
-        var isRow = typeof $element[0].rowIndex !== 'undefined';
-        var isElementVisible = (isCell || isRow) ? isTableElementVisible($element) : $element.is(':visible');
-        var tableexportDisplay = $element.data("tableexport-display");
-
-        if (isCell && tableexportDisplay != 'none' && tableexportDisplay != 'always') {
-          $element = $($element[0].parentNode);
-          isRow = typeof $element[0].rowIndex !== 'undefined';
-          tableexportDisplay = $element.data("tableexport-display");
-        }
-        if (isRow && tableexportDisplay != 'none' && tableexportDisplay != 'always') {
-          tableexportDisplay = $element.closest('table').data("tableexport-display");
-        }
-
-        return tableexportDisplay !== 'none' && (isElementVisible == true || tableexportDisplay == 'always');
-      }
-
-      function isTableElementVisible ($element) {
-        var hiddenEls = [];
-
-        if ( checkCellVisibilty ) {
-          hiddenEls = $hiddenTableElements.filter (function () {
-            var found = false;
-
-            if (this.nodeType == $element[0].nodeType) {
-              if (typeof this.rowIndex !== 'undefined' && this.rowIndex == $element[0].rowIndex)
-                found = true;
-              else if (typeof this.cellIndex !== 'undefined' && this.cellIndex == $element[0].cellIndex &&
-                       typeof this.parentNode.rowIndex !== 'undefined' &&
-                       typeof $element[0].parentNode.rowIndex !== 'undefined' &&
-                       this.parentNode.rowIndex == $element[0].parentNode.rowIndex)
-                found = true;
-            }
-            return found;
-          });
-        }
-        return (checkCellVisibilty == false || hiddenEls.length == 0);
-      }
-
-      function isColumnIgnored ($cell, rowLength, colIndex) {
+      function isColumnIgnored (rowLength, colIndex) {
         var result = false;
-
-        if (isVisible($cell)) {
-          if ( defaults.ignoreColumn.length > 0 ) {
-            if ( $.inArray(colIndex, defaults.ignoreColumn) != -1 ||
-              $.inArray(colIndex - rowLength, defaults.ignoreColumn) != -1 ||
-              (colNames.length > colIndex && typeof colNames[colIndex] != 'undefined' &&
-              $.inArray(colNames[colIndex], defaults.ignoreColumn) != -1) )
-              result = true;
-          }
+        if ( defaults.ignoreColumn.length > 0 ) {
+          if ( $.inArray(colIndex, defaults.ignoreColumn) != -1 ||
+            $.inArray(colIndex - rowLength, defaults.ignoreColumn) != -1 ||
+            (colNames.length > colIndex && typeof colNames[colIndex] != 'undefined' &&
+            $.inArray(colNames[colIndex], defaults.ignoreColumn) != -1) )
+            result = true;
         }
-        else
-          result = true;
-
         return result;
       }
 
       function ForEachVisibleCell (tableRow, selector, rowIndex, rowCount, cellcallback) {
-        if ( typeof (cellcallback) === 'function' ) {
-          var ignoreRow = false;
+        if ( $.inArray(rowIndex, defaults.ignoreRow) == -1 &&
+          $.inArray(rowIndex - rowCount, defaults.ignoreRow) == -1 ) {
 
-          if (typeof defaults.onIgnoreRow === 'function')
-            ignoreRow = defaults.onIgnoreRow($(tableRow), rowIndex);
+          var $row = $(tableRow).filter(function () {
+            return $(this).data("tableexport-display") != 'none' &&
+              ($(this).is(':visible') ||
+              $(this).data("tableexport-display") == 'always' ||
+              $(this).closest('table').data("tableexport-display") == 'always');
+          }).find(selector);
 
-          if (ignoreRow === false &&
-              $.inArray(rowIndex, defaults.ignoreRow) == -1 &&
-              $.inArray(rowIndex - rowCount, defaults.ignoreRow) == -1 &&
-              isVisible($(tableRow))) {
+          var rowColspan = 0;
 
-            var $cells = $(tableRow).find(selector);
-            var rowColspan = 0;
+          $row.each(function (colIndex) {
+            if ( $(this).data("tableexport-display") == 'always' ||
+              ($(this).css('display') != 'none' &&
+              $(this).css('visibility') != 'hidden' &&
+              $(this).data("tableexport-display") != 'none') ) {
+              if ( typeof (cellcallback) === "function" ) {
+                var c, Colspan = 1;
+                var r, Rowspan = 1;
+                var rowLength  = $row.length;
 
-            $cells.each(function (colIndex) {
-              var $cell = $(this);
-              var c, Colspan = 1;
-              var r, Rowspan = 1;
-              var cellCount  = $cells.length;
-
-              // handle rowspans from previous rows
-              if ( typeof rowspans[rowIndex] != 'undefined' && rowspans[rowIndex].length > 0 ) {
-                var colCount = colIndex;
-                for ( c = 0; c <= colCount; c++ ) {
-                  if ( typeof rowspans[rowIndex][c] != 'undefined' ) {
-                    if ( isColumnIgnored($cell, cellCount, colIndex + rowColspan) === false )
+                // handle rowspans from previous rows
+                if ( typeof rowspans[rowIndex] != 'undefined' && rowspans[rowIndex].length > 0 ) {
+                  var colCount = colIndex;
+                  for ( c = 0; c <= colCount; c++ ) {
+                    if ( typeof rowspans[rowIndex][c] != 'undefined' ) {
                       cellcallback(null, rowIndex, c);
-                    delete rowspans[rowIndex][c];
-                    colCount++;
+                      delete rowspans[rowIndex][c];
+                      colCount++;
+                    }
+                  }
+                  colIndex += rowspans[rowIndex].length;
+                  rowLength += rowspans[rowIndex].length;
+                }
+
+                if ( $(this).is("[colspan]") ) {
+                  Colspan = parseInt($(this).attr('colspan')) || 1;
+
+                  rowColspan += Colspan > 0 ? Colspan - 1 : 0;
+                }
+
+                if ( $(this).is("[rowspan]") )
+                  Rowspan = parseInt($(this).attr('rowspan')) || 1;
+
+                if ( isColumnIgnored(rowLength, colIndex + rowColspan) === false ) {
+                  // output content of current cell
+                  cellcallback(this, rowIndex, colIndex);
+
+                  // handle colspan of current cell
+                  for ( c = 1; c < Colspan; c++ )
+                    cellcallback(null, rowIndex, colIndex + c);
+                }
+
+                // store rowspan for following rows
+                if ( Rowspan > 1 ) {
+                  for ( r = 1; r < Rowspan; r++ ) {
+                    if ( typeof rowspans[rowIndex + r] == 'undefined' )
+                      rowspans[rowIndex + r] = [];
+
+                    rowspans[rowIndex + r][colIndex + rowColspan] = "";
+
+                    for ( c = 1; c < Colspan; c++ )
+                      rowspans[rowIndex + r][colIndex + rowColspan - c] = "";
                   }
                 }
-                colIndex += rowspans[rowIndex].length;
-                cellCount += rowspans[rowIndex].length;
               }
-
-              if ( $cell.is("[colspan]") ) {
-                Colspan = parseInt($cell.attr('colspan')) || 1;
-
-                rowColspan += Colspan > 0 ? Colspan - 1 : 0;
-              }
-              else if ( $cell.is("[rowspan]") )
-                Rowspan = parseInt($cell.attr('rowspan')) || 1;
-
-              if ( isColumnIgnored($cell, cellCount, colIndex + rowColspan) === false ) {
-                // output content of current cell
-                cellcallback(this, rowIndex, colIndex);
-
-                // handle colspan of current cell
-                for ( c = 1; c < Colspan; c++ )
-                  cellcallback(null, rowIndex, colIndex + c);
-              }
-
-              // store rowspan for following rows
-              if ( Rowspan > 1 ) {
-                for ( r = 1; r < Rowspan; r++ ) {
-                  if ( typeof rowspans[rowIndex + r] == 'undefined' )
-                    rowspans[rowIndex + r] = [];
-
-                  rowspans[rowIndex + r][colIndex + rowColspan] = "";
-
-                  for ( c = 1; c < Colspan; c++ )
-                    rowspans[rowIndex + r][colIndex + rowColspan - c] = "";
-                }
-              }
-            });
-
-            // handle rowspans from previous rows
-            if ( typeof rowspans[rowIndex] != 'undefined' && rowspans[rowIndex].length > 0 ) {
-              for ( var c = 0; c <= rowspans[rowIndex].length; c++ ) {
-                if ( typeof rowspans[rowIndex][c] != 'undefined' ) {
-                  cellcallback(null, rowIndex, c);
-                  delete rowspans[rowIndex][c];
-                }
+            }
+          });
+          // handle rowspans from previous rows
+          if ( typeof rowspans[rowIndex] != 'undefined' && rowspans[rowIndex].length > 0 ) {
+            for ( var c = 0; c <= rowspans[rowIndex].length; c++ ) {
+              if ( typeof rowspans[rowIndex][c] != 'undefined' ) {
+                cellcallback(null, rowIndex, c);
+                delete rowspans[rowIndex][c];
               }
             }
           }

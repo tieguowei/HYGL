@@ -547,6 +547,20 @@ var Member = function (){
                 });
             }
         },
+	tableExport : function() {
+			$('#member-table').tableExport(
+					{
+						type : 'excel',// 导出excel
+						escape : 'false',
+						ignoreColumn : [ 0 ], // 忽略某一列的索引
+						fileName : '会员记录', // 文件名称设置
+						worksheetName : 'sheet1', // 表格工作区名称
+						tableName : '会员记录',
+						excelstyles : [ 'background-color', 'color',
+								'font-size', 'font-weight' ]
+					})
+		},
+  
         formValidator:function () {
             $("#addMemberForm").bootstrapValidator({
                 fields:{
@@ -892,4 +906,4 @@ function updateMemberScore(){
             });
         }
 	});
-}
+};

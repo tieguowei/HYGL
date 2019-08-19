@@ -11,6 +11,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="${path}/css/system/employee/employeePage.css">
    	<script src="${path}/js/member/memberPage.js" charset="UTF-8" type="text/javascript"></script>
+     <script src="${path}/static/js/tableExport.js"></script>
+    
     <script src="${path}/static/js/bootstrap.js"></script>
 </head>
 <body>
@@ -68,6 +70,9 @@
   		</button>
   		<button type="button" class=" btn btn-info" onclick="Member.openDeduct()">
   				 <span class="glyphicon glyphicon-minus" >扣减积分</span>
+  		</button>
+  		<button style="margin-left:300px;" type="button" class=" btn btn-info" onclick="Member.tableExport()">
+  				 <span class="glyphicon glyphicon-share" >导出数据</span>
   		</button>
 </div>
 <!--列表 -->
