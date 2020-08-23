@@ -204,7 +204,7 @@
 					</div>
 					
 					<div class="form-group">
-						<label class="col-md-4 control-label">入职时间：</label>
+						<label class="col-md-4 control-label">创建时间：</label>
 						<div class="col-md-6 ">
 							<input type="text" id="update_entry_time" name="entryDate" onfocus="WdatePicker({lang:'zh-cn'})" class="form-control form-control-static"/>
 						</div>

@@ -544,7 +544,8 @@
 		WHEN activated_state = '1' THEN '启用'
 		WHEN activated_state = '2' THEN '删除'
 		WHEN activated_state = '3' THEN '禁用'
-		 ELSE '' END AS activated_state
+		 ELSE '' END AS activated_state,
+     DATE_FORMAT(entry_time,'%Y-%m-%d %H:%i:%s') entry_time
 	FROM
 		t_employee 
 	WHERE

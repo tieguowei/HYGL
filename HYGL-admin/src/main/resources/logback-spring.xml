@@ -21,16 +21,16 @@
     </appender>
     <!--按天生成日志-->
     <appender name="logFile"  class="ch.qos.logback.core.rolling.RollingFileAppender">
-          <Prudent>true</Prudent> 
+          <Prudent>true</Prudent>
           <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
                <FileNamePattern>
-                   /opt/tomcat_admin_8082/logs/logs/%d{yyyy-MM-dd}/%d{yyyy-MM-dd}.log
+                   /Users/tieguowei/Documents/work/personWorkspace/logs/%d{yyyy-MM-dd}.log
                </FileNamePattern>
               <maxHistory>${maxHistory}</maxHistory>
           </rollingPolicy>
           <layout class="ch.qos.logback.classic.PatternLayout">
                <Pattern>
-                %d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} -%msg%n    
+                %d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} -%msg%n
                </Pattern>
           </layout>
           <filter class="ch.qos.logback.classic.filter.ThresholdFilter">

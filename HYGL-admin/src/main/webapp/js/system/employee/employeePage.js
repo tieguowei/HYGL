@@ -72,6 +72,12 @@ var Employee = function (){
                     align : "center",
                     valign : "middle",
                     sortable : "true"
+                },{
+                    field : "entry_time",
+                    title : "收费时间",
+                    align : "center",
+                    valign : "middle",
+                    sortable : "true"
                 }, {
                     field : "mobile",
                     title : "手机号码",
