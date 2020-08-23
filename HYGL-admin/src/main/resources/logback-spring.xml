@@ -20,7 +20,7 @@
         </encoder>
     </appender>
     <!--按天生成日志-->
-    <appender name="logFile"  class="ch.qos.logback.core.rolling.RollingFileAppender">
+  <!--  <appender name="logFile"  class="ch.qos.logback.core.rolling.RollingFileAppender">
           <Prudent>true</Prudent>
           <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
                <FileNamePattern>
@@ -36,7 +36,7 @@
           <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>INFO</level>
         </filter>
-    </appender>
+    </appender>-->
 
     <!--myibatis log configure-->
     <logger name="com.apache.ibatis" level="TRACE"/>
@@ -47,7 +47,7 @@
 
     <root level="INFO,ERROR">
         <appender-ref ref="console" />
-        <appender-ref ref="logFile" />
+       <!-- <appender-ref ref="logFile" />-->
         <appender-ref ref="STDOUT"  />
     </root>
 
